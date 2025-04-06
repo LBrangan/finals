@@ -53,7 +53,7 @@
               label="Password"
               variant="outlined"
               type="password"
-              class="mb-5"
+              class="mb-3"
               prepend-inner-icon="mdi-lock"
 
               hide-details
@@ -69,7 +69,7 @@
 
             <v-col class="text-center">
               Don't have an account?
-              <a href="#" class="text-decoration-none font-weight-bold" style="color:#795548;">Sign Up</a>
+              <RouterLink to="/register" class="text-decoration-none font-weight-bold text-brown text--darken-3" >Sign Up</RouterLink>
             </v-col>
           </v-card>
           <v-col class="text-end">
@@ -81,7 +81,7 @@
   </v-main>
 
       <v-footer border app>
-        <span class="mdi mdi-copyright"> 2025 Copyright</span>
+        <span class="mdi mdi-school"> LearnMate</span>
       </v-footer>
     </v-app>
   </v-responsive>
