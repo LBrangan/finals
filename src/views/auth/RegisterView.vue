@@ -108,7 +108,7 @@ function onClick() {
 
                 <v-col class="text-center">
                   Already have an account?
-              <RouterLink to="/login" class="text-decoration-none font-weight-bold text-brown text--darken-3" >Sign Up</RouterLink>
+              <RouterLink to="/" class="text-decoration-none font-weight-bold text-brown text--darken-3" >Sign In</RouterLink>
                 </v-col>
               </v-card>
             </v-col>
