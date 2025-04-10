@@ -1,14 +1,12 @@
 <script setup>
-  import { ref } from 'vue'
+import { ref } from 'vue'
 
-  const theme = ref('light')
+const theme = ref('light')
 
-  function onClick () {
-    theme.value = theme.value === 'light' ? 'dark' : 'light'
-  }
+function onClick() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
+}
 </script>
-
-
 
 <template>
   <v-responsive class="border rounded">
@@ -25,60 +23,60 @@
       </v-app-bar>
 
       <v-main>
-        <br>
-        <br>
-        <br>
-        <br>
-    <v-container fluid >
-      <v-row justify="center">
-        <v-col cols="12" md="4" >
-          <v-card class="pa-6" elevation="2" rounded="lg">
-            <v-row justify="center">
-              <v-col cols="12" class="text-center">
-                <h1 class="mt-2 mb-4 font-weight-bold">Welcome Back</h1>
-                <h2 class="mt-2 mb-4 text-subtitle-2">Sign in to your account</h2>
+        <br />
+        <br />
+        <br />
+        <br />
+        <v-container fluid>
+          <v-row justify="center">
+            <v-col cols="12" md="4">
+              <v-card class="pa-6" elevation="2" rounded="lg">
+                <v-row justify="center">
+                  <v-col cols="12" class="text-center">
+                    <h1 class="mt-2 mb-4 font-weight-bold">Welcome Back</h1>
+                    <h2 class="mt-2 mb-4 text-subtitle-2">Sign in to your account</h2>
+                  </v-col>
+                </v-row>
 
+                <v-text-field
+                  label="Email address"
+                  variant="outlined"
+                  class="mb-3"
+                  prepend-inner-icon="mdi-email"
+                  hide-details
+                ></v-text-field>
+
+                <v-text-field
+                  label="Password"
+                  variant="outlined"
+                  type="password"
+                  class="mb-3"
+                  prepend-inner-icon="mdi-lock"
+                  hide-details
+                ></v-text-field>
+
+                <v-btn color="brown darken-3" class="white--text mb-3 font-weight-bold" block>
+                  Continue
+                </v-btn>
+
+                <v-col class="text-center">
+                  Don't have an account?
+                  <RouterLink
+                    to="/register"
+                    class="text-decoration-none font-weight-bold text-brown text--darken-3"
+                    >Sign Up</RouterLink
+                  >
+                </v-col>
+              </v-card>
+              <v-col class="text-center">
+                <a href="#" class="text-decoration-none font-weight-bold" style="color: #795548">
+                  Forgot Password?
+                </a>
               </v-col>
-            </v-row>
-
-            <v-text-field
-              label="Email address"
-              variant="outlined"
-              class="mb-3"
-              prepend-inner-icon="mdi-email"
-              hide-details
-            ></v-text-field>
-
-            <v-text-field
-              label="Password"
-              variant="outlined"
-              type="password"
-              class="mb-3"
-              prepend-inner-icon="mdi-lock"
-
-              hide-details
-            ></v-text-field>
-
-            <v-btn
-              color="brown darken-3"
-              class="white--text mb-3 font-weight-bold "
-              block
-            >
-              Continue
-            </v-btn>
-
-            <v-col class="text-center">
-              Don't have an account?
-              <RouterLink to="/register" class="text-decoration-none font-weight-bold text-brown text--darken-3" >Sign Up</RouterLink>
             </v-col>
-          </v-card>
-          <v-col class="text-end">
-            <a href="#" class="text-decoration-none font-weight-bold" style="color:#795548;"> Forgot Password? </a>
-            </v-col>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+          </v-row>
+        </v-container>
+      </v-main>
 
       <v-footer border app>
         <span class="mdi mdi-school"> LearnMate</span>
