@@ -43,7 +43,6 @@ function onClick() {
                     <v-text-field
                       label="First name"
                       variant="outlined"
-
                       prepend-inner-icon="mdi-rename"
                       hide-details
                     ></v-text-field>
@@ -53,7 +52,6 @@ function onClick() {
                     <v-text-field
                       label="Last name"
                       variant="outlined"
-
                       prepend-inner-icon="mdi-rename"
                       hide-details
                     ></v-text-field>
@@ -72,7 +70,6 @@ function onClick() {
                   </v-col>
                 </v-row>
 
-
                 <v-text-field
                   label="Email address"
                   variant="outlined"
@@ -80,8 +77,6 @@ function onClick() {
                   prepend-inner-icon="mdi-email"
                   hide-details
                 ></v-text-field>
-
-
 
                 <v-text-field
                   label="Password"
@@ -101,14 +96,17 @@ function onClick() {
                   hide-details
                 ></v-text-field>
 
-
                 <v-btn color="brown darken-3" class="white--text mb-3 font-weight-bold" block>
                   Continue
                 </v-btn>
 
                 <v-col class="text-center">
                   Already have an account?
-              <RouterLink to="/" class="text-decoration-none font-weight-bold text-brown text--darken-3" >Sign In</RouterLink>
+                  <RouterLink
+                    to="/"
+                    class="text-decoration-none font-weight-bold text-brown text--darken-3"
+                    >Sign In</RouterLink
+                  >
                 </v-col>
               </v-card>
             </v-col>
