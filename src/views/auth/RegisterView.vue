@@ -11,23 +11,22 @@ function onClick() {
 <template>
   <v-responsive class="border rounded">
     <v-app :theme="theme">
-      <v-app-bar class="px-3">
-        <v-spacer></v-spacer>
-
-        <v-btn
-          :prepend-icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          text=""
-          slim
-          @click="onClick"
-        ></v-btn>
-      </v-app-bar>
+      <!-- Floating Dark Mode Toggle -->
+      <v-btn
+        icon
+        :color="theme === 'light' ? 'yellow darken-3' : 'blue-grey darken-3'"
+        @click="onClick"
+        class="floating-toggle"
+      >
+        <v-icon>{{ theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+      </v-btn>
 
       <v-main>
-        <br />
-        <br />
-        <br />
-        <br />
-        <v-container fluid>
+        <v-container
+          fluid
+          class="bg-amber-lighten-2 d-flex align-center justify-center"
+          style="min-height: 100vh"
+        >
           <v-row justify="center">
             <v-col cols="12" md="4">
               <v-card class="pa-6" elevation="2" rounded="lg">
@@ -113,10 +112,19 @@ function onClick() {
           </v-row>
         </v-container>
       </v-main>
-
-      <v-footer border app>
-        <span class="mdi mdi-school"> LearnMate</span>
-      </v-footer>
     </v-app>
   </v-responsive>
 </template>
+
+<style scoped>
+.floating-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.bg-amber-lighten-2 {
+  background-color: #ffd54f; /* Adjust this color if needed */
+}
+</style>
