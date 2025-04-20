@@ -22,92 +22,98 @@ function onClick() {
       </v-btn>
 
       <v-main>
-        <v-container
-          fluid
-          class="bg-amber-lighten-2 d-flex align-center justify-center"
-          style="min-height: 100vh"
-        >
-          <v-row justify="center">
-            <v-col cols="12" md="4">
-              <v-card class="pa-6" elevation="2" rounded="lg">
-                <v-row justify="center">
-                  <v-col cols="12" class="text-center">
-                    <h1 class="mt-2 mb-4 font-weight-bold">Create Account</h1>
-                    <h2 class="mt-2 mb-4 text-subtitle-2">Create account to get started</h2>
-                  </v-col>
-                </v-row>
+        <v-container fluid class="bg-amber-lighten-2 fill-height">
+          <v-row align="center" justify="center">
+            <v-col cols="12" md="10">
+              <v-row>
+                <!-- Logo Section -->
+                <v-col cols="12" md="8" lg="6" class="d-flex align-center justify-center pa-8">
+            <img src="@/assets/background.jpg" alt="Logo" />
+          </v-col>
 
-                <v-row dense>
-                  <v-col cols-6>
+                <!-- Form Section -->
+                <v-col cols="12" md="6">
+                  <v-card class="pa-6" elevation="2" rounded="lg">
+                    <v-row justify="center">
+                      <v-col cols="12" class="text-center">
+                        <h1 class="mt-2 mb-4 font-weight-bold">Create Account</h1>
+                        <h2 class="mt-2 mb-4 text-subtitle-2">Create account to get started</h2>
+                      </v-col>
+                    </v-row>
+
+                    <v-row dense>
+                      <v-col cols="6">
+                        <v-text-field
+                          label="First name"
+                          variant="outlined"
+                          prepend-inner-icon="mdi-rename"
+                          hide-details
+                        />
+                      </v-col>
+
+                      <v-col cols="6">
+                        <v-text-field
+                          label="Last name"
+                          variant="outlined"
+                          prepend-inner-icon="mdi-rename"
+                          hide-details
+                        />
+                      </v-col>
+                    </v-row>
+
+                    <v-row dense>
+                      <v-col>
+                        <v-text-field
+                          label="Program"
+                          variant="outlined"
+                          class="mb-3 mt-1"
+                          prepend-inner-icon="mdi-rename"
+                          hide-details
+                        />
+                      </v-col>
+                    </v-row>
+
                     <v-text-field
-                      label="First name"
+                      label="Email address"
                       variant="outlined"
-                      prepend-inner-icon="mdi-rename"
+                      class="mb-3"
+                      prepend-inner-icon="mdi-email"
                       hide-details
-                    ></v-text-field>
-                  </v-col>
+                    />
 
-                  <v-col cols-6>
                     <v-text-field
-                      label="Last name"
+                      label="Password"
                       variant="outlined"
-                      prepend-inner-icon="mdi-rename"
+                      type="password"
+                      class="mb-3"
+                      prepend-inner-icon="mdi-lock"
                       hide-details
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    />
 
-                <v-row dense>
-                  <v-col>
                     <v-text-field
-                      label="Program"
+                      label="Confirm password"
                       variant="outlined"
-                      class="mb-3 mt-1"
-                      prepend-inner-icon="mdi-rename"
+                      type="password"
+                      class="mb-3"
+                      prepend-inner-icon="mdi-lock"
                       hide-details
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    />
 
-                <v-text-field
-                  label="Email address"
-                  variant="outlined"
-                  class="mb-3"
-                  prepend-inner-icon="mdi-email"
-                  hide-details
-                ></v-text-field>
+                    <v-btn color="orange" class="white--text mb-3 font-weight-bold" block>
+                      Sign Up
+                    </v-btn>
 
-                <v-text-field
-                  label="Password"
-                  variant="outlined"
-                  type="password"
-                  class="mb-3"
-                  prepend-inner-icon="mdi-lock"
-                  hide-details
-                ></v-text-field>
-
-                <v-text-field
-                  label="Confirm password"
-                  variant="outlined"
-                  type="password"
-                  class="mb-3"
-                  prepend-inner-icon="mdi-lock"
-                  hide-details
-                ></v-text-field>
-
-                <v-btn color="brown darken-3" class="white--text mb-3 font-weight-bold" block>
-                  Continue
-                </v-btn>
-
-                <v-col class="text-center">
-                  Already have an account?
-                  <RouterLink
-                    to="/"
-                    class="text-decoration-none font-weight-bold text-brown text--darken-3"
-                    >Sign In</RouterLink
-                  >
+                    <v-col class="text-center">
+                      Already have an account?
+                      <RouterLink
+                        to="/"
+                        class="text-decoration-none font-weight-bold text-orange text--darken-3"
+                        >Sign In</RouterLink
+                      >
+                    </v-col>
+                  </v-card>
                 </v-col>
-              </v-card>
+              </v-row>
             </v-col>
           </v-row>
         </v-container>
@@ -125,6 +131,10 @@ function onClick() {
 }
 
 .bg-amber-lighten-2 {
-  background-color: #ffd54f; /* Adjust this color if needed */
+  background-color: #ffd54f;
+}
+
+.fill-height {
+  min-height: 100vh;
 }
 </style>
