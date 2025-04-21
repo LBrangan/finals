@@ -12,15 +12,7 @@ function onClick() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
 
-function onSubmit() {
-  const emailValid = emailRules.every((rule) => rule(email.value) === true)
-  const passwordValid = passwordRules.every((rule) => rule(password.value) === true)
 
-  if (emailValid && passwordValid) {
-    alert('Form submitted successfully!')
-    // Add your form submission logic here
-  }
-}
 </script>
 
 <template>
@@ -83,12 +75,13 @@ function onSubmit() {
 
               <!-- Continue Button -->
               <v-btn
-                color="brown darken-3"
+                color="orange"
                 class="white--text mb-3 font-weight-bold"
                 block
-                @click="onSubmit"
+                :to="'/dashboard'"
+                component="RouterLink"
               >
-                Continue
+                Sign In
               </v-btn>
 
               <!-- Sign Up Link -->
@@ -96,7 +89,7 @@ function onSubmit() {
                 Don't have an account?
                 <RouterLink
                   to="/register"
-                  class="text-decoration-none font-weight-bold text-brown text--darken-3"
+                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
                 >
                   Sign Up
                 </RouterLink>
@@ -105,7 +98,7 @@ function onSubmit() {
 
             <!-- Forgot Password Link -->
             <v-col class="text-center">
-              <a href="#" class="text-decoration-none font-weight-bold" style="color: #795548">
+              <a href="#" class="text-decoration-none font-weight-bold" style="color: orange">
                 Forgot Password?
               </a>
             </v-col>
