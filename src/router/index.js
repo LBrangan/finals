@@ -5,41 +5,39 @@ import DashboardView from '@/views/auth/DashboardView.vue'
 import ProfilesView from '@/views/auth/ProfilesView.vue'
 import BookingView from '@/views/auth/BookingView.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'login',
-      component: LoginView
+      component: LoginView,
     },
 
     {
       path: '/register',
       name: 'register',
-      component: RegisterView
+      component: RegisterView,
     },
 
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: DashboardView
+      component: DashboardView,
     },
 
     {
       path: '/profiles',
       name: 'profiles',
-      component: ProfilesView
+      component: ProfilesView,
     },
 
     {
       path: '/booking',
       name: 'booking',
-      component: BookingView
-    }
-
-  ]
+      component: BookingView,
+    },
+  ],
 })
 
 export default router
