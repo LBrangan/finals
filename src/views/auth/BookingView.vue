@@ -45,52 +45,45 @@ export default {
 <template>
   <v-app>
     <v-container fluid class="background">
-      <v-row class="justify-center">
-        <v-col cols="12" md="8">
-          <v-card>
-            <v-card-title>
-              <h2>Book a Session with Maria Sanchez</h2>
+      <v-row justify="center" class="mt-5">
+        <v-col cols="12" md="10" lg="8">
+          <v-card class="pa-5 elevation-3">
+            <v-card-title class="text-h4 text-center">
+              Book a Session with Maria Sanchez
             </v-card-title>
-            <v-card-subtitle>
+            <v-card-subtitle class="text-center mb-4">
               Subject: Computer Science - 3rd Year | In-Person Tutoring
             </v-card-subtitle>
 
-            <v-stepper v-model="step">
-              <v-stepper-header>
-                <v-stepper-step :complete="step > 1" step="1">Select Subject</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step :complete="step > 2" step="2">Choose Date</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step :complete="step > 3" step="3">Confirm Details</v-stepper-step>
-              </v-stepper-header>
-
+            <v-stepper v-model="step" class="elevation-1">
               <v-stepper-items>
                 <v-stepper-content step="1">
-                  <SubjectSelector
-                    :selectedSubject="selectedSubject"
-                    @update-subject="updateSubject"
-                    @next-step="step = 2"
-                  />
+                  <v-card class="pa-4 mb-4">
+                    <SubjectSelector
+                      :selectedSubject="selectedSubject"
+                      @update-subject="updateSubject"
+                    />
+                  </v-card>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                  <DateSelector
-                    :selectedDate="selectedDate"
-                    @update-date="updateDate"
-                    @next-step="step = 3"
-                  />
+                  <v-card class="pa-4 mb-4">
+                    <DateSelector :selectedDate="selectedDate" @update-date="updateDate" />
+                  </v-card>
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                  <BookingConfirmation
-                    :selectedSubject="selectedSubject"
-                    :selectedDate="selectedDate"
-                    :selectedTime="selectedTime"
-                    :selectedLocation="selectedLocation"
-                    :agreeTerms="agreeTerms"
-                    @update-terms="agreeTerms = $event"
-                    @confirm-booking="bookSession"
-                  />
+                  <v-card class="pa-4 mb-4">
+                    <BookingConfirmation
+                      :selectedSubject="selectedSubject"
+                      :selectedDate="selectedDate"
+                      :selectedTime="selectedTime"
+                      :selectedLocation="selectedLocation"
+                      :agreeTerms="agreeTerms"
+                      @update-terms="agreeTerms = $event"
+                      @confirm-booking="bookSession"
+                    />
+                  </v-card>
                 </v-stepper-content>
               </v-stepper-items>
             </v-stepper>
@@ -100,7 +93,7 @@ export default {
               :timeout="3000"
               color="success"
               multi-line
-              style="text-align: center; font-size: 20px; font-weight: bold"
+              class="text-center"
             >
               {{ snackbarMessage }}
               <v-btn text @click="snackbar = false">Close</v-btn>
@@ -115,6 +108,7 @@ export default {
 <style scoped>
 .background {
   background-color: #f5f5f5;
-  height: max-content;
+  min-height: 100vh;
+  padding: 20px;
 }
 </style>

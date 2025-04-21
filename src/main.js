@@ -17,7 +17,8 @@ const app = createApp(App)
 
 const vuetify = createVuetify({
   icons: {
-    defaultSet: 'mdi'},
+    defaultSet: 'mdi',
+  },
   components,
   directives,
 })
