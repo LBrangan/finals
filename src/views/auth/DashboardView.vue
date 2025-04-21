@@ -4,11 +4,11 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 function goToBrowseTutors() {
-  router.push('/browse-tutors')
+  router.push('/profiles')
 }
 
 function goToAppointments() {
-  router.push('/appointments')
+  router.push('/booking')
 }
 </script>
 
