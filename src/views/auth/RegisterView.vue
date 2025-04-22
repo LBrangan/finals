@@ -28,8 +28,8 @@ function onClick() {
               <v-row>
                 <!-- Logo Section -->
                 <v-col cols="12" md="8" lg="6" class="d-flex align-center justify-center pa-8">
-            <img src="@/assets/background.jpg" alt="Logo" />
-          </v-col>
+                  <img src="@/assets/background.jpg" alt="Logo" />
+                </v-col>
 
                 <!-- Form Section -->
                 <v-col cols="12" md="6">
@@ -99,8 +99,14 @@ function onClick() {
                       hide-details
                     />
 
-                    <v-btn color="orange" class="white--text mb-3 font-weight-bold" block>
-                      Sign Up
+                    <v-btn
+                      color="orange"
+                      class="white--text mb-3 font-weight-bold"
+                      block
+                      :to="'/dashboard'"
+                      component="RouterLink"
+                    >
+                      Sign In
                     </v-btn>
 
                     <v-col class="text-center">

@@ -11,8 +11,6 @@ const passwordRules = [(v) => !!v || 'This field is required']
 function onClick() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
-
-
 </script>
 
 <template>
@@ -98,7 +96,7 @@ function onClick() {
 
             <!-- Forgot Password Link -->
             <v-col class="text-center">
-              <a href="#" class="text-decoration-none font-weight-bold" style="color: orange">
+              <a href="#" class="text-decoration-none font-weight-bold" style="color: black">
                 Forgot Password?
               </a>
             </v-col>
