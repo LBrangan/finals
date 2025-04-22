@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const theme = ref('light')
 const form = ref({
@@ -13,6 +14,7 @@ const form = ref({
 
 const errors = ref({})
 const loading = ref(false)
+const router = useRouter()
 
 // Validation rules
 const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
@@ -41,6 +43,8 @@ const handleSubmit = async () => {
   try {
     // Add your registration logic here
     console.log('Form submitted:', form.value)
+    // Navigate to dashboard after successful registration
+    router.push('/dashboard')
   } catch (error) {
     console.error('Registration error:', error)
   } finally {

@@ -19,9 +19,6 @@ export default {
     }
   },
   methods: {
-    nextStep() {
-      this.$emit('next-step')
-    },
     updateSubject(subject) {
       this.$emit('update-subject', subject)
     },
@@ -41,6 +38,5 @@ export default {
       prepend-icon="mdi-book"
       @change="updateSubject"
     ></v-select>
-    <v-btn color="primary" @click="nextStep" :disabled="!selectedSubject"> Next </v-btn>
   </v-form>
 </template>

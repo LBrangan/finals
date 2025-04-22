@@ -4,6 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/auth/DashboardView.vue'
 import ProfilesView from '@/views/auth/ProfilesView.vue'
 import BookingView from '@/views/auth/BookingView.vue'
+import SessionsView from '@/components/SessionsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,9 +34,14 @@ const router = createRouter({
     },
 
     {
-      path: '/booking',
-      name: 'booking',
+      path: '/bookings',
+      name: 'bookings',
       component: BookingView,
+    },
+    {
+      path: '/sessions',
+      name: 'sessions',
+      component: SessionsView,
     },
   ],
 })

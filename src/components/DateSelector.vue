@@ -20,9 +20,6 @@ export default {
         this.$emit('update-date', date)
       }
     },
-    nextStep() {
-      this.$emit('next-step')
-    },
   },
 }
 </script>
@@ -60,5 +57,4 @@ export default {
       </v-card>
     </v-col>
   </v-row>
-  <v-btn color="primary" @click="nextStep" :disabled="!selectedDate">Next</v-btn>
 </template>

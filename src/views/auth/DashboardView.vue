@@ -17,14 +17,14 @@ function goToProfile() {
     <v-main class="fill-height main-bg">
       <v-container fluid class="fill-height pa-0">
         <!-- Header Section -->
-        <v-app-bar app color="yellow darken-2" elevation="2">
+        <v-app-bar app color="yellow-lighten-1" elevation="2">
           <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title class="text-h6 font-weight-bold">LearnMate</v-toolbar-title>
           <v-spacer></v-spacer>
 
           <!-- Desktop Navigation -->
           <div class="d-none d-md-flex">
-            <v-btn text class="mx-2" to="/booking">
+            <v-btn text class="mx-2" to="/sessions">
               <v-icon left>mdi-calendar</v-icon>
               Sessions
             </v-btn>
@@ -50,7 +50,7 @@ function goToProfile() {
         <!-- Mobile Navigation Drawer -->
         <v-navigation-drawer v-model="drawer" temporary>
           <v-list>
-            <v-list-item to="/booking" prepend-icon="mdi-calendar"> Sessions </v-list-item>
+            <v-list-item to="/sessions" prepend-icon="mdi-calendar"> Sessions </v-list-item>
             <v-list-item to="/profiles" prepend-icon="mdi-account-search"> Tutors </v-list-item>
             <v-list-item to="/" prepend-icon="mdi-logout"> Sign-out </v-list-item>
           </v-list>
@@ -109,7 +109,7 @@ function goToProfile() {
                         block
                         height="56"
                         rounded="lg"
-                        :to="'/booking'"
+                        :to="'/sessions'"
                       >
                         View Sessions
                       </v-btn>
