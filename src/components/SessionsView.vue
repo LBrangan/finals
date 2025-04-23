@@ -1,9 +1,17 @@
 <script>
+import { useToast } from 'vue-toastification'
+import SessionsReschedule from './SessionsReschedule.vue'
+
 export default {
+  components: {
+    SessionsReschedule,
+  },
   data() {
     return {
       tab: null,
       sessions: JSON.parse(localStorage.getItem('sessions') || '[]'),
+      showReschedule: false,
+      selectedSession: null,
     }
   },
   mounted() {
@@ -36,11 +44,41 @@ export default {
         this.sessions = JSON.parse(e.newValue || '[]')
       }
     },
+    openReschedule(session) {
+      this.selectedSession = session
+      this.showReschedule = true
+    },
+    handleReschedule(updatedSession) {
+      const toast = useToast()
+      const index = this.sessions.findIndex((s) => s.id === updatedSession.id)
+      if (index !== -1) {
+        this.sessions[index] = updatedSession
+        localStorage.setItem('sessions', JSON.stringify(this.sessions))
+        this.showReschedule = false
+        toast.success('Session rescheduled successfully!')
+      }
+    },
+    cancelSession(sessionId) {
+      const toast = useToast()
+      if (confirm('Are you sure you want to cancel this session?')) {
+        this.sessions = this.sessions.filter((s) => s.id !== sessionId)
+        localStorage.setItem('sessions', JSON.stringify(this.sessions))
+        toast.success('Session cancelled successfully!')
+      }
+    },
   },
 }
 </script>
 
 <template>
+  <SessionsReschedule
+    v-if="selectedSession"
+    :session="selectedSession"
+    :show="showReschedule"
+    @update:show="showReschedule = $event"
+    @reschedule="handleReschedule"
+  />
+
   <v-container fluid class="pa-6 sessions-background">
     <v-card class="mx-auto session-card-container" max-width="1200">
       <v-card-title class="text-h4 font-weight-bold text-center py-6">
@@ -81,6 +119,26 @@ export default {
                         <div class="d-flex align-center">
                           <v-icon color="amber-darken-2" class="mr-2">mdi-account</v-icon>
                           <strong>Tutor:</strong>&nbsp;{{ session.tutor }}
+                        </div>
+                        <div class="d-flex mt-4">
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="amber"
+                            variant="outlined"
+                            class="mr-2"
+                            @click="openReschedule(session)"
+                          >
+                            <v-icon left>mdi-calendar-clock</v-icon>
+                            Reschedule
+                          </v-btn>
+                          <v-btn
+                            color="error"
+                            variant="outlined"
+                            @click="cancelSession(session.id)"
+                          >
+                            <v-icon left>mdi-cancel</v-icon>
+                            Cancel
+                          </v-btn>
                         </div>
                       </v-col>
                     </v-row>
@@ -143,5 +201,10 @@ export default {
 .session-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.v-btn {
+  text-transform: none;
+  font-weight: 500;
 }
 </style>
