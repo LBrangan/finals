@@ -1,10 +1,12 @@
 <script>
 import { useToast } from 'vue-toastification'
 import SessionsReschedule from './SessionsReschedule.vue'
+import SessionCancel from './SessionCancel.vue'
 
 export default {
   components: {
     SessionsReschedule,
+    SessionCancel,
   },
   data() {
     return {
@@ -12,6 +14,8 @@ export default {
       sessions: JSON.parse(localStorage.getItem('sessions') || '[]'),
       showReschedule: false,
       selectedSession: null,
+      showCancel: false,
+      sessionToCancel: null,
     }
   },
   mounted() {
@@ -58,13 +62,57 @@ export default {
         toast.success('Session rescheduled successfully!')
       }
     },
-    cancelSession(sessionId) {
+    async cancelSession(sessionId) {
       const toast = useToast()
-      if (confirm('Are you sure you want to cancel this session?')) {
-        this.sessions = this.sessions.filter((s) => s.id !== sessionId)
-        localStorage.setItem('sessions', JSON.stringify(this.sessions))
-        toast.success('Session cancelled successfully!')
-      }
+
+      const toastId = toast.info('Are you sure you want to cancel this session?', {
+        timeout: false,
+        closeOnClick: false,
+        closeButton: false,
+        position: 'top-center',
+        containerClassName: 'cancel-session-toast',
+        component: {
+          template: `
+            <div class="d-flex justify-space-between align-center pa-2">
+              <span>Are you sure you want to cancel this session?</span>
+              <div class="ml-4">
+                <v-btn color="error" size="small" class="mr-2" @click="confirmCancel">Yes</v-btn>
+                <v-btn color="primary" size="small" @click="cancelAction">No</v-btn>
+              </div>
+            </div>
+          `,
+          methods: {
+            confirmCancel() {
+              this.$emit('action')
+            },
+            cancelAction() {
+              this.$emit('cancel')
+            },
+          },
+        },
+        action: {
+          onClick: () => {
+            this.sessions = this.sessions.filter((s) => s.id !== sessionId)
+            localStorage.setItem('sessions', JSON.stringify(this.sessions))
+            toast.dismiss(toastId)
+            toast.success('Session cancelled successfully!')
+          },
+        },
+        cancel: {
+          onClick: () => {
+            toast.dismiss(toastId)
+          },
+        },
+      })
+    },
+    openCancelDialog(sessionId) {
+      this.sessionToCancel = sessionId
+      this.showCancel = true
+    },
+    handleCancelSession(sessionId) {
+      this.sessions = this.sessions.filter((s) => s.id !== sessionId)
+      localStorage.setItem('sessions', JSON.stringify(this.sessions))
+      this.showCancel = false
     },
   },
 }
@@ -77,6 +125,13 @@ export default {
     :show="showReschedule"
     @update:show="showReschedule = $event"
     @reschedule="handleReschedule"
+  />
+
+  <SessionCancel
+    :show="showCancel"
+    :session-id="sessionToCancel"
+    @update:show="showCancel = $event"
+    @cancel="handleCancelSession"
   />
 
   <v-container fluid class="pa-6 sessions-background">
@@ -134,7 +189,7 @@ export default {
                           <v-btn
                             color="error"
                             variant="outlined"
-                            @click="cancelSession(session.id)"
+                            @click="openCancelDialog(session.id)"
                           >
                             <v-icon left>mdi-cancel</v-icon>
                             Cancel
