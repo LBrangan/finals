@@ -1,63 +1,14 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-
-const router = useRouter()
-const drawer = ref(false)
-
-function goToProfile() {
-  router.push('/profiles').catch((err) => {
-    console.error('Navigation error:', err)
-  })
-}
+import TheNavbar from '@/components/layout/TheNavbar.vue'
 </script>
 
 <template>
   <v-app>
+    <TheNavbar />
     <v-main class="fill-height main-bg">
       <v-container fluid class="fill-height pa-0">
-        <!-- Header Section -->
-        <v-app-bar app color="yellow-lighten-1" elevation="2">
-          <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer"></v-app-bar-nav-icon>
-          <v-toolbar-title class="text-h6 font-weight-bold">LearnMate</v-toolbar-title>
-          <v-spacer></v-spacer>
-
-          <!-- Desktop Navigation -->
-          <div class="d-none d-md-flex">
-            <v-btn text class="mx-2" to="/sessions">
-              <v-icon left>mdi-calendar</v-icon>
-              Sessions
-            </v-btn>
-            <v-btn text class="mx-2" to="/profiles">
-              <v-icon left>mdi-account-search</v-icon>
-              Tutors
-            </v-btn>
-            <v-btn text class="mx-2" to="/">
-              <v-icon left>mdi-logout</v-icon>
-              Sign-out
-            </v-btn>
-          </div>
-          <v-btn
-            color="yellow-darken-3"
-            icon
-            class="ml-4 elevation-2 profile-btn"
-            @click="goToProfile"
-          >
-            <v-icon size="32">mdi-account-circle</v-icon>
-          </v-btn>
-        </v-app-bar>
-
-        <!-- Mobile Navigation Drawer -->
-        <v-navigation-drawer v-model="drawer" temporary>
-          <v-list>
-            <v-list-item to="/sessions" prepend-icon="mdi-calendar"> Sessions </v-list-item>
-            <v-list-item to="/profiles" prepend-icon="mdi-account-search"> Tutors </v-list-item>
-            <v-list-item to="/" prepend-icon="mdi-logout"> Sign-out </v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-
         <!-- Welcome Section -->
-        <v-container class="pt-16 px-4">
+        <v-container class="pt-8 pt-md-16 px-4">
           <v-row align="center" justify="center" class="text-center">
             <v-col cols="12" md="8" class="welcome-section">
               <h1 class="text-h3 font-weight-bold mb-6 responsive-title">Welcome to LearnMate!</h1>
@@ -69,7 +20,7 @@ function goToProfile() {
           </v-row>
 
           <!-- Main Content Section -->
-          <v-row align="center" justify="center" class="text-center">
+          <v-row align="center" justify="center" class="text-center mt-4">
             <v-col cols="12" sm="10" md="8">
               <v-row>
                 <v-col cols="12" sm="6" class="py-2">
@@ -88,6 +39,7 @@ function goToProfile() {
                         height="56"
                         rounded="lg"
                         :to="'/profiles'"
+                        aria-label="Browse Tutors"
                       >
                         Browse Tutors
                       </v-btn>
@@ -110,6 +62,7 @@ function goToProfile() {
                         height="56"
                         rounded="lg"
                         :to="'/sessions'"
+                        aria-label="View Sessions"
                       >
                         View Sessions
                       </v-btn>
