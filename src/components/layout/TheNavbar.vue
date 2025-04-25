@@ -16,7 +16,7 @@ function goToProfile() {
   <!-- Header Section -->
   <v-app-bar app color="yellow-lighten-1" elevation="2">
     <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title class="text-h6 font-weight-bold">LearnMate</v-toolbar-title>
+    <v-toolbar-title class="text-h6 font-weight-bold"> LearnMate</v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!-- Desktop Navigation -->
