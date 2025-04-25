@@ -150,8 +150,10 @@ const handleSubmit = async () => {
                   block
                   :loading="loading"
                   @click="handleSubmit"
+                  :disabled="loading"
+                  prepend-icon="mdi-account-plus"
                 >
-                  Sign Up
+                  Register
                 </v-btn>
 
                 <v-col class="text-center">

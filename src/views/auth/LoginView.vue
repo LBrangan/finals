@@ -83,8 +83,9 @@ async function handleSubmit() {
                 block
                 type="submit"
                 :disabled="!isFormValid"
+                prepend-icon="mdi-login"
               >
-                Sign In
+                Log-in
               </v-btn>
             </v-form>
 
