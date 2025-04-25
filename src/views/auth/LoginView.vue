@@ -1,7 +1,20 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+
+const isMobile = ref(window.innerWidth < 960)
+const updateMobile = () => {
+  isMobile.value = window.innerWidth < 960
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateMobile)
+})
 
 const email = ref('')
 const password = ref('')
@@ -35,12 +48,22 @@ async function handleSubmit() {
     <template #content>
       <v-row justify="center">
         <!-- Left Column -->
-        <v-col cols="12" md="8" lg="6" class="text-center">
+        <v-col
+          :cols="isMobile ? 12 : 8"
+          :md="8"
+          :lg="6"
+          :class="{ 'text-center': !isMobile, 'd-none': isMobile && !isFormValid }"
+        >
           <img src="@/assets/background.jpg" alt="Logo" />
         </v-col>
 
         <!-- Right Column -->
-        <v-col cols="12" md="4" p="5">
+        <v-col
+          :cols="isMobile ? 12 : 4"
+          :md="4"
+          :class="isMobile ? 'px-4' : ''"
+          :p="isMobile ? 3 : 5"
+        >
           <v-card class="pa-6" elevation="2" rounded="lg">
             <v-row justify="center">
               <v-col cols="12" class="text-center">
@@ -123,5 +146,11 @@ async function handleSubmit() {
 
 .bg-amber-lighten-2 {
   background-color: #ffd54f !important; /* Adjust this color if needed */
+}
+
+@media (max-width: 960px) {
+  .v-col {
+    padding: 12px !important;
+  }
 }
 </style>

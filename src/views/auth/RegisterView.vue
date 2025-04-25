@@ -1,7 +1,20 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+
+const isMobile = ref(window.innerWidth < 960)
+const updateMobile = () => {
+  isMobile.value = window.innerWidth < 960
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateMobile)
+})
 
 const form = ref({
   firstName: '',
@@ -57,15 +70,20 @@ const handleSubmit = async () => {
   <AppLayout>
     <template #content>
       <v-row align="center" justify="center">
-        <v-col cols="12" sm="11" md="10" lg="9">
+        <v-col :cols="isMobile ? 12 : 11" :sm="isMobile ? 12 : 11" :md="10" :lg="9">
           <v-row>
             <!-- Logo Section - Hide on small screens -->
-            <v-col cols="12" md="6" class="d-none d-md-flex align-center justify-center pa-8">
+            <v-col
+              cols="12"
+              md="6"
+              :class="{ 'd-none': isMobile, 'd-md-flex': !isMobile }"
+              class="align-center justify-center pa-8"
+            >
               <img src="@/assets/background.jpg" alt="Logo" class="responsive-img" />
             </v-col>
 
             <!-- Form Section -->
-            <v-col cols="12" sm="10" md="6" class="mx-auto">
+            <v-col :cols="isMobile ? 12 : 10" :md="6" :class="isMobile ? 'px-4' : 'mx-auto'">
               <v-card class="pa-4 pa-sm-6" elevation="2" rounded="lg">
                 <v-row justify="center">
                   <v-col cols="12" class="text-center">
