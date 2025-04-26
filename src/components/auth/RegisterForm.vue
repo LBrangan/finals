@@ -8,33 +8,18 @@ import {
   passwordValidator,
   confirmedValidator,
 } from '@/utils/validators'
+import { ref } from 'vue'
+import { useRegister } from '@/composables/auth/register'
+import AlertNotification from '@/components/common/AlertNotification.vue'
 
-// Props
-const props = defineProps({
+defineProps({
   isMobile: {
     type: Boolean,
     default: false,
   },
 })
 
-const formDataDefault = {
-  firstName: '',
-  lastName: '',
-  program: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-}
-
-const formData = ref({ ...formDataDefault })
-const errors = ref({
-  firstName: '',
-  lastName: '',
-  program: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-})
+const { formData, formAction, refVForm, onFormSubmit } = useRegister()
 
 const isPasswordVisible = ref(false)
 const loading = ref(false)
