@@ -1,7 +1,6 @@
 <script>
 import { useToast } from 'vue-toastification'
 import { computed } from 'vue'
-
 export default {
   props: {
     show: Boolean,
@@ -15,7 +14,6 @@ export default {
       get: () => props.show,
       set: (value) => emit('update:show', value),
     })
-
     return {
       dialogVisible,
     }
@@ -71,7 +69,6 @@ export default {
   border-radius: 8px;
   overflow: hidden;
 }
-
 .v-btn {
   text-transform: none;
   font-weight: 500;
