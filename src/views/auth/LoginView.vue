@@ -1,7 +1,12 @@
 <script setup>
+<<<<<<< HEAD
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+=======
+import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+>>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
 
 const isMobile = ref(window.innerWidth < 960)
 const updateMobile = () => {
@@ -18,29 +23,19 @@ onUnmounted(() => {
 
 const email = ref('')
 const password = ref('')
-const emailRules = [
-  (v) => !!v || 'Email is required',
-  (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-]
-const passwordRules = [
-  (v) => !!v || 'Password is required',
-  (v) => v?.length >= 6 || 'Password must be at least 6 characters',
-]
+const emailRules = [(v) => !!v || 'This field is required']
+const passwordRules = [(v) => !!v || 'This field is required']
 
-const form = ref(null)
-const router = useRouter()
-const isFormValid = ref(false)
-
+<<<<<<< HEAD
 async function handleSubmit() {
   const { valid } = await form.value.validate()
-
-  if (valid) {
-    console.log('Form is valid. Proceeding to dashboard...')
-    router.push('/dashboard')
-  } else {
-    console.log('Form is invalid. Please correct the errors.')
-  }
+=======
+function onClick() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
+
+>>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
+
 </script>
 
 <template>
@@ -72,7 +67,44 @@ async function handleSubmit() {
                 </v-col>
               </v-row>
 
+<<<<<<< HEAD
               <LoginForm @submit="handleSubmit" v-model:valid="isFormValid"></LoginForm>
+=======
+              <!-- Email Field -->
+              <v-text-field
+                v-model="email"
+                label="Email address"
+                variant="outlined"
+                class="mb-3"
+                type="email"
+                prepend-inner-icon="mdi-email"
+                :rules="emailRules"
+                hide-details="auto"
+              ></v-text-field>
+
+              <!-- Password Field -->
+              <v-text-field
+                v-model="password"
+                label="Password"
+                variant="outlined"
+                type="password"
+                class="mb-3"
+                prepend-inner-icon="mdi-lock"
+                :rules="passwordRules"
+                hide-details="auto"
+              ></v-text-field>
+
+              <!-- Continue Button -->
+              <v-btn
+                color="orange"
+                class="white--text mb-3 font-weight-bold"
+                block
+                :to="'/dashboard'"
+                component="RouterLink"
+              >
+                Sign In
+              </v-btn>
+>>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
 
               <!-- Sign Up Link -->
               <v-col class="text-center">
@@ -94,6 +126,7 @@ async function handleSubmit() {
 
             <!-- Sign Up Link -->
             <v-col class="text-center">
+<<<<<<< HEAD
               Don't have an account?
               <RouterLink
                 to="/register"
@@ -101,6 +134,11 @@ async function handleSubmit() {
               >
                 Sign Up
               </RouterLink>
+=======
+              <a href="#" class="text-decoration-none font-weight-bold" style="color: orange">
+                Forgot Password?
+              </a>
+>>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
             </v-col>
           </v-card>
 
