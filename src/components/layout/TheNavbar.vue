@@ -16,7 +16,11 @@ function goToProfile() {
   <!-- Header Section -->
   <v-app-bar app color="yellow-lighten-1" elevation="2">
     <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title class="text-h6 font-weight-bold">LearnMate</v-toolbar-title>
+
+    <v-toolbar-title class="d-flex align-center">
+      <h3 class="text-h6 font-weight-bold mb-0">LearnMate</h3>
+    </v-toolbar-title>
+
     <v-spacer></v-spacer>
 
     <!-- Desktop Navigation -->
@@ -57,6 +61,19 @@ function goToProfile() {
 <style scoped>
 .profile-btn {
   border-radius: 50%;
-  background: rgba(255, 250, 250, 0.993);
+  background: rgba(252, 252, 252, 0.99);
+}
+
+.v-toolbar-title {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.v-toolbar-title:hover {
+  opacity: 0.8;
+}
+
+.rounded-circle {
+  border-radius: 50%;
 }
 </style>
