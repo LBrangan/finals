@@ -21,45 +21,22 @@ onUnmounted(() => {
   <AppLayout>
     <template #content>
       <v-container fluid>
-        <v-row justify="center" align="center" class="fill-height">
-          <!-- Left Column - Image -->
-          <v-col
-            :cols="isMobile ? 12 : 8"
-            :md="8"
-            :lg="6"
-            :class="{ 'text-center': !isMobile, 'd-none': isMobile }"
-          >
-            <img src="@/assets/background.jpg" alt="Logo" class="login-image" />
-          </v-col>
-
-          <!-- Right Column - Register Form -->
-          <v-col
-            :cols="isMobile ? 12 : 4"
-            :md="4"
-            :class="isMobile ? 'px-4' : ''"
-            :p="isMobile ? 3 : 5"
-          >
-            <v-card class="pa-6" elevation="2" rounded="lg">
-              <v-row justify="center">
-                <v-col cols="12" class="text-center">
-                  <h1 class="mt-2 font-weight-bold">Create Account</h1>
-                  <h2 class="mt-2 mb-2 text-subtitle-2">Sign up to get started!</h2>
-                </v-col>
-              </v-row>
-
-              <RegisterForm :isMobile="isMobile"></RegisterForm>
-
-              <!-- Sign In Link -->
-              <v-col class="text-center">
-                Already have an account?
-                <RouterLink
-                  to="/"
-                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
-                >
-                  Sign In
-                </RouterLink>
+        <v-row align="center" justify="center">
+          <v-col :cols="isMobile ? 12 : 11" :sm="isMobile ? 12 : 11" :md="10" :lg="9">
+            <v-row>
+              <!-- Logo Section - Hide on small screens -->
+              <v-col
+                cols="12"
+                md="6"
+                :class="{ 'd-none': isMobile, 'd-md-flex': !isMobile }"
+                class="align-center justify-center pa-8"
+              >
+                <img src="@/assets/background.jpg" alt="Logo" class="responsive-img" />
               </v-col>
-            </v-card>
+
+              <!-- Form Section -->
+              <RegisterForm :isMobile="isMobile"></RegisterForm>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
@@ -68,19 +45,28 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.bg-amber-lighten-2 {
+  background-color: #ffd54f;
+}
+
 .fill-height {
   min-height: 100vh;
 }
 
-.login-image {
+.responsive-img {
   max-width: 100%;
   height: auto;
   object-fit: contain;
 }
 
-@media (max-width: 960px) {
-  .v-col {
-    padding: 12px !important;
+@media (max-width: 600px) {
+  .floating-toggle {
+    top: 10px;
+    right: 10px;
   }
+}
+
+.v-col {
+  transition: all 0.3s ease;
 }
 </style>
