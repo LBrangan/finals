@@ -1,159 +1,96 @@
-<template>
-  <v-app>
-    <v-container fluid class="background">
-      <v-row class="justify-center">
-        <v-col cols="12" md="8">
-          <v-card>
-            <v-card-title>
-              <h2>Book a Session with Maria Sanchez</h2>
-            </v-card-title>
-
-            <v-card-subtitle>Subject: Computer Science - 3rd Year | In-Person Tutoring</v-card-subtitle>
-
-            <v-card-text>
-              <v-form>
-                <v-select
-                  v-model="selectedSubject"
-                  :items="subjects"
-                  label="Select Subject"
-                ></v-select>
-
-                <v-date-picker
-                  v-model="selectedDate"
-                  label="Choose Date"
-                  :disabled="false"
-                ></v-date-picker>
-
-                <v-select
-                  v-model="selectedTime"
-                  :items="availableTimes"
-                  label="Choose Time"
-                ></v-select>
-
-                <v-select
-                  v-model="selectedLocation"
-                  :items="locations"
-                  label="Select Location"
-                ></v-select>
-
-                <v-checkbox
-                  v-model="agreeTerms"
-                  label="I agree to the session terms and conditions"
-                  required
-                ></v-checkbox>
-
-                <v-btn
-                  color="primary"
-                  @click="bookSession"
-                  :disabled="!agreeTerms || !selectedDate || !selectedTime || !selectedLocation"
-                >
-                  Book Session
-                </v-btn>
-              </v-form>
-
-              <v-divider></v-divider>
-
-              <v-card-subtitle>
-                <h1 class="pt-5">Available Dates</h1>
-                <h3>Select here:</h3>
-              </v-card-subtitle>
-              <v-card-text>
-                <v-list>
-                  <v-list-item-group>
-                    <v-list-item
-                      v-for="date in availableDates"
-                      :key="date.id"
-                      :style="{ backgroundColor: date.isAvailable ? '#FFA500' : '#FFF', cursor: date.isAvailable ? 'pointer' : 'not-allowed' }"
-                      @click="date.isAvailable ? selectDate(date) : null"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          {{ date.date }} - Location: {{ date.location }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                          Status: {{ date.isAvailable ? 'Available' : 'Not Available' }}
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-card-text>
-            </v-card-text>
-          </v-card>
-
-          <!-- Snackbar for messages -->
-          <v-snackbar
-            v-model="snackbar"
-            :timeout="3000"
-            color="success"
-            multi-line
-            style="text-align: center; font-size: 20px; font-weight: bold;"
-          >
-            {{ snackbarMessage }}
-            <v-btn text @click="snackbar = false">Close</v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-app>
-</template>
-
 <script>
 export default {
   data() {
     return {
-      selectedSubject: null,
-      subjects: [
-        'Data Structures',
-        'Networking',
-        'Web Development',
-        'Programming 1',
-      ],
+      selectedSubjects: [],
       selectedDate: null,
+      availableTimeSlots: [],
       selectedTime: null,
-      availableTimes: ['10:00 AM', '2:00 PM', '4:00 PM'],
-      selectedLocation: null,
-      locations: ['Room 101', 'Library Study Room', 'Lab 203'],
-      agreeTerms: false,
-      availableDates: [
-        { id: 1, date: 'May 5, 2025', isAvailable: true, location: 'Room 101' },
-        { id: 2, date: 'May 7, 2025', isAvailable: true, location: 'CL 5' },
-        { id: 3, date: 'May 9, 2025', isAvailable: true, location: 'Library Study Room' },
-        { id: 4, date: 'May 13, 2025', isAvailable: true, location: 'Room 101' },
-        { id: 5, date: 'May 15, 2025', isAvailable: true, location: 'Library Study Room' },
-      ],
-      snackbar: false,
-      snackbarMessage: '',
+      email: '',
+      phone: '',
+      additionalNotes: '',
+      agree: false,
     };
   },
   methods: {
-    selectDate(date) {
-      if (date.isAvailable) {
-        this.selectedDate = date.date;
-        this.selectedLocation = date.location; // Automatically select location based on available date
-      }
+    showTimeSlots() {
+      // Example logic to populate available time slots based on selected date
+      const timeSlots = {
+        '2023-04-29': ['2:00 PM - 4:00 PM'],
+        '2023-05-01': ['9:00 AM - 11:00 AM'],
+        '2023-05-03': ['1:00 PM - 3:00 PM'],
+      };
+      this.availableTimeSlots = timeSlots[this.selectedDate] || [];
     },
     bookSession() {
-      const selectedAvailableDate = this.availableDates.find(
-        (date) => date.date === this.selectedDate && date.isAvailable
-      );
-
-      if (selectedAvailableDate) {
-        this.snackbarMessage = `Session booked on ${this.selectedDate} at ${this.selectedTime}, Location: ${this.selectedLocation}`;
-        this.snackbar = true;
-        // Implement further booking logic here
-      } else {
-        this.snackbarMessage = 'Please select an available date.';
-        this.snackbar = true;
-      }
+      // Logic to book the session (e.g., API call)
+      alert('Session booked!');
     },
   },
 };
 </script>
 
+<template>
+  <v-container>
+    <v-card>
+      <v-card-title>
+        <h2>Book a Session with Maria Sanchez</h2>
+        <p>Computer Science - 3rd Year | Online Tutoring</p>
+      </v-card-title>
+
+      <v-card-subtitle>
+        <h3>1. Select Subject</h3>
+      </v-card-subtitle>
+
+      <v-card-text>
+        <v-checkbox-group v-model="selectedSubjects">
+          <v-checkbox label="Data Structures"></v-checkbox>
+          <v-checkbox label="Networking"></v-checkbox>
+          <v-checkbox label="Web Development"></v-checkbox>
+          <v-checkbox label="Programming 1"></v-checkbox>
+        </v-checkbox-group>
+
+        <v-card-subtitle>
+          <h3>2. Choose Date & Time</h3>
+        </v-card-subtitle>
+
+        <v-date-picker v-model="selectedDate" @input="showTimeSlots" />
+        <v-list v-if="availableTimeSlots.length">
+          <v-list-item-group v-model="selectedTime">
+            <v-list-item v-for="time in availableTimeSlots" :key="time">
+              <v-list-item-content>
+                <v-list-item-title>{{ time }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+
+        <v-card-subtitle>
+          <h3>3. Contact Information</h3>
+        </v-card-subtitle>
+
+        <v-text-field v-model="email" label="Email Address" />
+        <v-text-field v-model="phone" label="Phone Number" />
+
+        <v-card-subtitle>
+          <h3>4. Additional Notes</h3>
+        </v-card-subtitle>
+
+        <v-textarea v-model="additionalNotes" label="Any specific topics or questions you'd like to focus on?" />
+
+        <v-checkbox v-model="agree" label="I agree to the session terms and conditions." />
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn :disabled="!agree" color="primary" @click="bookSession">Book Session</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-container>
+</template>
+
+
 <style scoped>
-.background {
-  background-color: #f5c042; /* Yellow background */
-  height: 100vh; /* Full height */
+.v-card {
+  margin: 20px;
 }
 </style>
