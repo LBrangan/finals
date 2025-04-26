@@ -27,7 +27,7 @@ export default {
   },
 }
 </script>
-v-model="localAgreeTerms"
+
 <template>
   <h3>Confirm Your Booking</h3>
   <p>

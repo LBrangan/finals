@@ -1,5 +1,38 @@
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const selectedSubject = ref(null)
+const selectedDate = ref(null)
+const selectedTime = ref(null)
+const selectedLocation = ref(null)
+const agreeTerms = ref(false)
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+
+const subjects = ['Data Structures', 'Networking', 'Web Development', 'Programming 1']
+const availableTimes = ['10:00 AM', '2:00 PM', '4:00 PM']
+const locations = ['Room 101', 'Library Study Room', 'Lab 203']
+
+const availableDates = [
+  { id: 1, date: 'May 5, 2025', isAvailable: true, location: 'Room 101' },
+  { id: 2, date: 'May 7, 2025', isAvailable: true, location: 'CL 5' },
+  { id: 3, date: 'May 9, 2025', isAvailable: true, location: 'Library Study Room' },
+  { id: 4, date: 'May 13, 2025', isAvailable: true, location: 'Room 101' },
+  { id: 5, date: 'May 15, 2025', isAvailable: true, location: 'Library Study Room' },
+]
+
+function selectDate(date) {
+  if (date.isAvailable) {
+    selectedDate.value = date.date
+    selectedLocation.value = date.location
+  }
+}
+
 <script>
-<<<<<<< HEAD
+
 export default {
   data() {
     return {
@@ -93,7 +126,7 @@ export default {
 <style scoped>
 .v-card {
   margin: 20px;
-=======
+
 import { useToast } from 'vue-toastification'
 import SubjectSelector from '@/components/SubjectSelector.vue'
 import DateSelector from '@/components/DateSelector.vue'
@@ -197,262 +230,140 @@ export default {
           `Session booked on ${this.selectedDate} at ${this.selectedTime}, Location: ${this.selectedLocation}`,
         )
 
-        // Reset form
-        this.selectedTutor = null
-        this.selectedSubject = null
-        this.selectedDate = null
-        this.selectedTime = null
-        this.agreeTerms = false
-      } else {
-        toast.error('Please complete all fields.')
-      }
-    },
-    nextStep() {
-      if (
-        (this.currentStep === 1 && this.selectedTutor) ||
-        (this.currentStep === 2 && this.selectedSubject) ||
-        (this.currentStep === 3 && this.selectedDate && this.selectedTime) ||
-        this.currentStep === 4
-      ) {
-        if (this.currentStep < 4) {
-          this.currentStep++
-        }
-      }
-    },
-    prevStep() {
-      if (this.currentStep > 1) {
-        this.currentStep--
-      }
-    },
-    resetForm() {
-      this.selectedTutor = null
-      this.selectedSubject = null
-      this.selectedDate = null
-      this.selectedTime = null
-      this.selectedLocation = null
-      this.agreeTerms = false
-      this.currentStep = 1
-    },
-  },
+
+function bookSession() {
+  if (selectedDate.value && selectedTime.value && selectedLocation.value) {
+    snackbarMessage.value = `Session booked successfully for ${selectedDate.value} at ${selectedTime.value}`
+    snackbar.value = true
+    setTimeout(() => router.push('/dashboard'), 2000)
+  }
 }
 </script>
 
 <template>
   <v-app>
-    <v-container fluid class="booking-background">
-      <v-row justify="center" class="mt-5">
-        <v-col cols="12" md="10" lg="8">
-          <v-card class="booking-card">
-            <v-card-title class="text-h4 text-center font-weight-bold mb-6">
-              Book a Tutoring Session
-              <div class="text-subtitle-1 mt-2 text-grey">
-                Choose your preferred tutor to get started
-              </div>
-            </v-card-title>
+    <v-main class="booking-bg">
+      <v-container fluid>
+        <v-row class="justify-center">
+          <v-col cols="12" md="8">
+            <v-card>
+              <v-card-title>
+                <h2>Book a Session with Maria Sanchez</h2>
+              </v-card-title>
 
-            <v-window v-model="currentStep" class="mb-6">
-              <!-- Tutor Selection Step -->
-              <v-window-item :value="1">
-                <v-card flat>
-                  <v-card-title class="text-h6 d-flex align-center">
-                    <v-icon color="amber" class="mr-2">mdi-account-group</v-icon>
-                    Step 1: Select a Tutor
-                  </v-card-title>
-                  <v-card-text>
-                    <v-row>
-                      <v-col v-for="tutor in tutors" :key="tutor.id" cols="12" md="4">
-                        <v-card
-                          :class="{ 'selected-tutor': selectedTutor?.id === tutor.id }"
-                          @click="selectTutor(tutor)"
-                          elevation="2"
-                          class="tutor-card"
-                        >
-                          <v-img :src="tutor.image" height="200" cover></v-img>
-                          <v-card-title>{{ tutor.name }}</v-card-title>
-                          <v-card-subtitle> {{ tutor.field }} - {{ tutor.year }} </v-card-subtitle>
-                          <v-card-text>
-                            <div class="d-flex align-center">
-                              <v-rating
-                                :model-value="tutor.rating"
-                                color="amber"
-                                density="compact"
-                                half-increments
-                                readonly
-                                size="small"
-                              ></v-rating>
-                              <span class="ml-2">{{ tutor.rating }}/5</span>
-                            </div>
-                            <div class="mt-2">
-                              <v-chip
-                                v-for="subject in tutor.subjects"
-                                :key="subject"
-                                class="mr-1 mb-1"
-                                size="small"
-                                color="amber-lighten-4"
-                              >
-                                {{ subject }}
-                              </v-chip>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-window-item>
-
-              <!-- Existing Steps (adjust value to 2, 3, 4) -->
-              <v-window-item :value="2">
-                <v-card flat>
-                  <v-card-title class="text-h6 d-flex align-center">
-                    <v-icon color="amber" class="mr-2">mdi-book-open-variant</v-icon>
-                    Step 2: Select a Subject
-                  </v-card-title>
-                  <v-card-text>
-                    <SubjectSelector
-                      :selectedSubject="selectedSubject"
-                      @update-subject="updateSubject"
-                    />
-                  </v-card-text>
-                </v-card>
-              </v-window-item>
-
-              <v-window-item :value="3">
-                <v-card flat>
-                  <v-card-title class="text-h6 d-flex align-center">
-                    <v-icon color="amber" class="mr-2">mdi-calendar</v-icon>
-                    Step 3: Choose a Date & Time
-                  </v-card-title>
-                  <v-card-text>
-                    <DateSelector :selectedDate="selectedDate" @update-date="updateDate" />
-                    <v-divider class="my-4"></v-divider>
-                    <v-card-subtitle class="pb-0 text-h6">Available Times</v-card-subtitle>
-                    <v-row class="mt-2">
-                      <v-col v-for="time in availableTimes" :key="time" cols="12" sm="4" md="3">
-                        <v-btn
-                          block
-                          :color="selectedTime === time ? 'amber-darken-2' : 'grey-lighten-3'"
-                          :variant="selectedTime === time ? 'elevated' : 'outlined'"
-                          @click="updateTime(time)"
-                          class="mb-2 time-btn"
-                          :class="{ selected: selectedTime === time }"
-                        >
-                          {{ time }}
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-window-item>
-
-              <v-window-item :value="4">
-                <v-card flat>
-                  <v-card-title class="text-h6 d-flex align-center">
-                    <v-icon color="amber" class="mr-2">mdi-check-circle</v-icon>
-                    Step 4: Confirm Your Booking
-                  </v-card-title>
-                  <v-card-text>
-                    <BookingConfirmation
-                      :selectedSubject="selectedSubject"
-                      :selectedDate="selectedDate"
-                      :selectedTime="selectedTime"
-                      :selectedLocation="selectedLocation"
-                      :agreeTerms="agreeTerms"
-                      @update-terms="agreeTerms = $event"
-                      @confirm-booking="bookSession"
-                    />
-                  </v-card-text>
-                </v-card>
-              </v-window-item>
-            </v-window>
-
-            <v-divider class="mb-4"></v-divider>
-
-            <v-card-actions class="px-4 pb-4">
-              <v-btn color="grey" variant="text" @click="prevStep" :disabled="currentStep === 1">
-                <v-icon left>mdi-arrow-left</v-icon>
-                Back
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn color="error" variant="text" @click="resetForm">
-                <v-icon left>mdi-refresh</v-icon>
-                Reset
-              </v-btn>
-              <v-btn
-                color="amber-darken-2"
-                @click="currentStep === 4 ? bookSession() : nextStep()"
-                :disabled="
-                  (currentStep === 1 && !selectedTutor) ||
-                  (currentStep === 2 && !selectedSubject) ||
-                  (currentStep === 3 && !selectedDate) ||
-                  (currentStep === 4 && (!agreeTerms || !selectedTime))
-                "
+              <v-card-subtitle
+                >Subject: Computer Science - 3rd Year | In-Person Tutoring</v-card-subtitle
               >
-                {{ currentStep === 4 ? 'Confirm Booking' : 'Continue' }}
-                <v-icon right>{{ currentStep === 4 ? 'mdi-check' : 'mdi-arrow-right' }}</v-icon>
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+
+              <v-card-text>
+                <v-form>
+                  <v-select
+                    v-model="selectedSubject"
+                    :items="subjects"
+                    label="Select Subject"
+                  ></v-select>
+
+                  <v-date-picker
+                    v-model="selectedDate"
+                    label="Choose Date"
+                    :disabled="false"
+                  ></v-date-picker>
+
+                  <v-select
+                    v-model="selectedTime"
+                    :items="availableTimes"
+                    label="Choose Time"
+                  ></v-select>
+
+                  <v-select
+                    v-model="selectedLocation"
+                    :items="locations"
+                    label="Select Location"
+                  ></v-select>
+
+                  <v-checkbox
+                    v-model="agreeTerms"
+                    label="I agree to the session terms and conditions"
+                    required
+                  ></v-checkbox>
+
+                  <v-btn
+                    color="primary"
+                    @click="bookSession"
+                    :disabled="!agreeTerms || !selectedDate || !selectedTime || !selectedLocation"
+                  >
+                    Book Session
+                  </v-btn>
+                </v-form>
+
+                <v-divider></v-divider>
+
+                <v-card-subtitle>
+                  <h1 class="pt-5">Available Dates</h1>
+                  <h3>Select here:</h3>
+                </v-card-subtitle>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item-group>
+                      <v-list-item
+                        v-for="date in availableDates"
+                        :key="date.id"
+                        :style="{
+                          backgroundColor: date.isAvailable ? '#FFA500' : '#FFF',
+                          cursor: date.isAvailable ? 'pointer' : 'not-allowed',
+                        }"
+                        @click="date.isAvailable ? selectDate(date) : null"
+                      >
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ date.date }} - Location: {{ date.location }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle>
+                            Status: {{ date.isAvailable ? 'Available' : 'Not Available' }}
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-card-text>
+              </v-card-text>
+            </v-card>
+
+            <!-- Snackbar for messages -->
+            <v-snackbar
+              v-model="snackbar"
+              :timeout="3000"
+              color="success"
+              multi-line
+              style="text-align: center; font-size: 20px; font-weight: bold"
+            >
+              {{ snackbarMessage }}
+              <v-btn text @click="snackbar = false">Close</v-btn>
+            </v-snackbar>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
 <style scoped>
-.booking-background {
-  background: linear-gradient(135deg, #ffd54f 0%, #ffecb3 100%);
+.booking-bg {
+  background-color: #ffd54f;
   min-height: 100vh;
-  padding: 20px;
 }
 
-.booking-card {
+.v-card {
   border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 24px;
 }
 
-.v-window {
-  min-height: 450px; /* Increased height */
+.session-card {
+  transition: transform 0.2s;
 }
 
-/* Improved text readability */
-.text-h4 {
-  color: #2c3e50;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
 
-.text-h6 {
-  color: #34495e;
-  font-weight: 600;
-}
-
-.text-subtitle-1 {
-  color: #546e7a;
-  font-size: 1.1rem;
-}
-
-/* Enhanced button styles */
-.v-btn {
-  text-transform: none;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  height: 48px;
-}
-
-.v-btn:hover {
-  transform: scale(1.02);
-}
-
-.v-btn:focus {
-  outline: 2px solid #ffd54f;
-  outline-offset: 2px;
-}
+.session-card:hover {
+  transform: translateY(-2px);
 
 .v-btn.v-btn--elevated {
   background-color: #ffa000 !important;
@@ -522,6 +433,6 @@ export default {
   .v-window {
     min-height: 500px;
   }
->>>>>>> f0ffe068f35d31afa3253e34824084398dbac361
+
 }
 </style>
