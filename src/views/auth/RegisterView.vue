@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -55,23 +54,13 @@ const handleSubmit = async () => {
 
   loading.value = true
   try {
-    // Add your registration logic here
     console.log('Form submitted:', form.value)
-    // Navigate to dashboard after successful registration
     router.push('/dashboard')
   } catch (error) {
     console.error('Registration error:', error)
   } finally {
     loading.value = false
   }
-=======
-import { ref } from 'vue'
-
-const theme = ref('light')
-
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
 }
 </script>
 
@@ -81,7 +70,6 @@ function onClick() {
       <v-row align="center" justify="center">
         <v-col :cols="isMobile ? 12 : 11" :sm="isMobile ? 12 : 11" :md="10" :lg="9">
           <v-row>
-            <!-- Logo Section - Hide on small screens -->
             <v-col
               cols="12"
               md="6"
@@ -91,8 +79,6 @@ function onClick() {
               <img src="@/assets/background.jpg" alt="Logo" class="responsive-img" />
             </v-col>
 
-<<<<<<< HEAD
-            <!-- Form Section -->
             <v-col :cols="isMobile ? 12 : 10" :md="6" :class="isMobile ? 'px-4' : 'mx-auto'">
               <v-card class="pa-4 pa-sm-6" elevation="2" rounded="lg">
                 <v-row justify="center">
@@ -193,101 +179,6 @@ function onClick() {
                   >
                 </v-col>
               </v-card>
-=======
-      <v-main>
-        <v-container fluid class="bg-amber-lighten-2 fill-height">
-          <v-row align="center" justify="center">
-            <v-col cols="12" md="10">
-              <v-row>
-                <!-- Logo Section -->
-                <v-col cols="12" md="8" lg="6" class="d-flex align-center justify-center pa-8">
-            <img src="@/assets/background.jpg" alt="Logo" />
-          </v-col>
-
-                <!-- Form Section -->
-                <v-col cols="12" md="6">
-                  <v-card class="pa-6" elevation="2" rounded="lg">
-                    <v-row justify="center">
-                      <v-col cols="12" class="text-center">
-                        <h1 class="mt-2 mb-4 font-weight-bold">Create Account</h1>
-                        <h2 class="mt-2 mb-4 text-subtitle-2">Create account to get started</h2>
-                      </v-col>
-                    </v-row>
-
-                    <v-row dense>
-                      <v-col cols="6">
-                        <v-text-field
-                          label="First name"
-                          variant="outlined"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-
-                      <v-col cols="6">
-                        <v-text-field
-                          label="Last name"
-                          variant="outlined"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-                    </v-row>
-
-                    <v-row dense>
-                      <v-col>
-                        <v-text-field
-                          label="Program"
-                          variant="outlined"
-                          class="mb-3 mt-1"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-                    </v-row>
-
-                    <v-text-field
-                      label="Email address"
-                      variant="outlined"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-email"
-                      hide-details
-                    />
-
-                    <v-text-field
-                      label="Password"
-                      variant="outlined"
-                      type="password"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-lock"
-                      hide-details
-                    />
-
-                    <v-text-field
-                      label="Confirm password"
-                      variant="outlined"
-                      type="password"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-lock"
-                      hide-details
-                    />
-
-                    <v-btn color="orange" class="white--text mb-3 font-weight-bold" block>
-                      Sign Up
-                    </v-btn>
-
-                    <v-col class="text-center">
-                      Already have an account?
-                      <RouterLink
-                        to="/"
-                        class="text-decoration-none font-weight-bold text-orange text--darken-3"
-                        >Sign In</RouterLink
-                      >
-                    </v-col>
-                  </v-card>
-                </v-col>
-              </v-row>
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
             </v-col>
           </v-row>
         </v-col>

@@ -1,12 +1,7 @@
 <script setup>
-<<<<<<< HEAD
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-=======
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
 
 const isMobile = ref(window.innerWidth < 960)
 const updateMobile = () => {
@@ -23,26 +18,22 @@ onUnmounted(() => {
 
 const email = ref('')
 const password = ref('')
+const isFormValid = ref(false)
 const emailRules = [(v) => !!v || 'This field is required']
 const passwordRules = [(v) => !!v || 'This field is required']
+const router = useRouter()
 
-<<<<<<< HEAD
 async function handleSubmit() {
-  const { valid } = await form.value.validate()
-=======
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
+  if (email.value && password.value) {
+    router.push('/dashboard')
+  }
 }
-
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
-
 </script>
 
 <template>
   <AppLayout>
     <template #content>
       <v-row justify="center">
-        <!-- Left Column -->
         <v-col
           :cols="isMobile ? 12 : 8"
           :md="8"
@@ -52,81 +43,52 @@ function onClick() {
           <img src="@/assets/background.jpg" alt="Logo" />
         </v-col>
 
-          <!-- Right Column - Login Form -->
-          <v-col
-            :cols="isMobile ? 12 : 4"
-            :md="4"
-            :class="isMobile ? 'px-4' : ''"
-            :p="isMobile ? 3 : 5"
-          >
-            <v-card class="pa-6" elevation="2" rounded="lg">
-              <v-row justify="center">
-                <v-col cols="12" class="text-center">
-                  <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
-                  <h2 class="mt-2 mb-2 text-subtitle-2">Sign in to your account!</h2>
-                </v-col>
-              </v-row>
-
-<<<<<<< HEAD
-              <LoginForm @submit="handleSubmit" v-model:valid="isFormValid"></LoginForm>
-=======
-              <!-- Email Field -->
-              <v-text-field
-                v-model="email"
-                label="Email address"
-                variant="outlined"
-                class="mb-3"
-                type="email"
-                prepend-inner-icon="mdi-email"
-                :rules="emailRules"
-                hide-details="auto"
-              ></v-text-field>
-
-              <!-- Password Field -->
-              <v-text-field
-                v-model="password"
-                label="Password"
-                variant="outlined"
-                type="password"
-                class="mb-3"
-                prepend-inner-icon="mdi-lock"
-                :rules="passwordRules"
-                hide-details="auto"
-              ></v-text-field>
-
-              <!-- Continue Button -->
-              <v-btn
-                color="orange"
-                class="white--text mb-3 font-weight-bold"
-                block
-                :to="'/dashboard'"
-                component="RouterLink"
-              >
-                Sign In
-              </v-btn>
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
-
-              <!-- Sign Up Link -->
-              <v-col class="text-center">
-                Don't have an account?
-                <RouterLink
-                  to="/register"
-                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
-                >
-                  Sign Up
-                </RouterLink>
+        <v-col
+          :cols="isMobile ? 12 : 4"
+          :md="4"
+          :class="isMobile ? 'px-4' : ''"
+          :p="isMobile ? 3 : 5"
+        >
+          <v-card class="pa-6" elevation="2" rounded="lg">
+            <v-row justify="center">
+              <v-col cols="12" class="text-center">
+                <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
+                <h2 class="mt-2 mb-2 text-subtitle-2">Sign in to your account!</h2>
               </v-col>
             </v-row>
 
-            <LoginForm
-              @submit="handleSubmit"
-              :valid="isFormValid"
-              @update:valid="(val) => (isFormValid = val)"
+            <v-text-field
+              v-model="email"
+              label="Email address"
+              variant="outlined"
+              class="mb-3"
+              type="email"
+              prepend-inner-icon="mdi-email"
+              :rules="emailRules"
+              hide-details="auto"
             />
 
-            <!-- Sign Up Link -->
+            <v-text-field
+              v-model="password"
+              label="Password"
+              variant="outlined"
+              type="password"
+              class="mb-3"
+              prepend-inner-icon="mdi-lock"
+              :rules="passwordRules"
+              hide-details="auto"
+            />
+
+            <v-btn
+              color="orange"
+              class="white--text mb-3 font-weight-bold"
+              block
+              @click="handleSubmit"
+            >
+              Sign In
+            </v-btn>
+
             <v-col class="text-center">
-<<<<<<< HEAD
               Don't have an account?
               <RouterLink
                 to="/register"
@@ -134,20 +96,14 @@ function onClick() {
               >
                 Sign Up
               </RouterLink>
-=======
-              <a href="#" class="text-decoration-none font-weight-bold" style="color: orange">
+            </v-col>
+
+            <v-col class="text-center">
+              <a href="#" class="text-decoration-none font-weight-bold" style="color: black">
                 Forgot Password?
               </a>
->>>>>>> parent of 00ea636 (Merge pull request #2 from angelmariellecocon/development)
             </v-col>
           </v-card>
-
-          <!-- Forgot Password Link -->
-          <v-col class="text-center">
-            <a href="#" class="text-decoration-none font-weight-bold" style="color: black">
-              Forgot Password?
-            </a>
-          </v-col>
         </v-col>
       </v-row>
     </template>
