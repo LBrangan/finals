@@ -57,7 +57,7 @@ async function handleSubmit() {
           <img src="@/assets/background.jpg" alt="Logo" />
         </v-col>
 
-        <!-- Right Column -->
+        <!-- Right Column - Login Form -->
         <v-col
           :cols="isMobile ? 12 : 4"
           :md="4"

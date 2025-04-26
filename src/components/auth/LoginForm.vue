@@ -4,20 +4,8 @@ import { useToast } from 'vue-toastification'
 import { ref } from 'vue'
 
 const { formData, formAction, refVForm, onFormSubmit } = useLogin()
+
 const isPasswordVisible = ref(false)
-
-// Define emits for form validation
-defineEmits(['update:valid', 'submit'])
-
-defineProps({
-  valid: {
-    type: Boolean,
-    default: false,
-  },
-})
-
-// Make sure password is included in formData
-formData.value.password = ''
 </script>
 
 <template>
@@ -47,7 +35,9 @@ formData.value.password = ''
 
     <!-- Password Field -->
     <v-text-field
-      v-model="formData.password"
+      v-model="password"
+      :append-inner-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append-inner="isPasswordVisible = !isPasswordVisible"
       label="Password"
       variant="outlined"
       :type="isPasswordVisible ? 'text' : 'password'"

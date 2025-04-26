@@ -12,13 +12,6 @@ import { ref } from 'vue'
 import { useRegister } from '@/composables/auth/register'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 
-defineProps({
-  isMobile: {
-    type: Boolean,
-    default: false,
-  },
-})
-
 const { formData, formAction, refVForm, onFormSubmit } = useRegister()
 
 const isPasswordVisible = ref(false)
