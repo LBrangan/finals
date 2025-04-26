@@ -57,6 +57,7 @@ async function handleSubmit() {
           <img src="@/assets/background.jpg" alt="Logo" />
         </v-col>
 
+<<<<<<< HEAD
         <!-- Right Column - Login Form -->
         <v-col
           :cols="isMobile ? 12 : 4"
@@ -69,6 +70,34 @@ async function handleSubmit() {
               <v-col cols="12" class="text-center">
                 <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
                 <h2 class="mt-2 mb-2 text-subtitle-2">Sign in to your account!</h2>
+=======
+          <!-- Right Column - Login Form -->
+          <v-col
+            :cols="isMobile ? 12 : 4"
+            :md="4"
+            :class="isMobile ? 'px-4' : ''"
+            :p="isMobile ? 3 : 5"
+          >
+            <v-card class="pa-6" elevation="2" rounded="lg">
+              <v-row justify="center">
+                <v-col cols="12" class="text-center">
+                  <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
+                  <h2 class="mt-2 mb-2 text-subtitle-2">Sign in to your account!</h2>
+                </v-col>
+              </v-row>
+
+              <LoginForm @submit="handleSubmit" v-model:valid="isFormValid"></LoginForm>
+
+              <!-- Sign Up Link -->
+              <v-col class="text-center">
+                Don't have an account?
+                <RouterLink
+                  to="/register"
+                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
+                >
+                  Sign Up
+                </RouterLink>
+>>>>>>> parent of 6069d9d (feat: fixed errors on log-in and register.)
               </v-col>
             </v-row>
 
