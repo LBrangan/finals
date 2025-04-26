@@ -1,11 +1,24 @@
 <script setup>
+import AlertNotification from '@/components/common/AlertNotification.vue'
 import { requiredValidator, emailValidator } from '@/utils/validators'
-import { useToast } from 'vue-toastification'
 import { ref } from 'vue'
+import { useLogin } from '@/composables/auth/login'
 
 const { formData, formAction, refVForm, onFormSubmit } = useLogin()
-
 const isPasswordVisible = ref(false)
+
+// Define emits for form validation
+defineEmits(['update:valid', 'submit'])
+
+defineProps({
+  valid: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+// Make sure password is included in formData
+formData.value.password = ''
 </script>
 
 <template>
@@ -25,26 +38,24 @@ const isPasswordVisible = ref(false)
           type="email"
           prepend-inner-icon="mdi-email"
           :rules="[requiredValidator, emailValidator]"
-          :disabled="loading"
+          :disabled="formAction.formProcess"
           hide-details="auto"
         ></v-text-field>
       </v-col>
     </v-row>
 
-    <!-- Email Field -->
-
     <!-- Password Field -->
     <v-text-field
-      v-model="password"
-      :append-inner-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
-      @click:append-inner="isPasswordVisible = !isPasswordVisible"
+      v-model="formData.password"
       label="Password"
       variant="outlined"
       :type="isPasswordVisible ? 'text' : 'password'"
       class="mb-3"
       prepend-inner-icon="mdi-lock-outline"
+      :append-inner-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
-      :disabled="loading"
+      :disabled="formAction.formProcess"
       hide-details="auto"
     ></v-text-field>
 
@@ -52,13 +63,13 @@ const isPasswordVisible = ref(false)
     <v-btn
       color="orange"
       class="white--text mb-3 font-weight-bold"
-      block
-      type="submit"
-      :loading="loading"
-      :disabled="!isFormValid || loading"
       prepend-icon="mdi-login"
+      type="submit"
+      :loading="formAction.formProcess"
+      :disabled="formAction.formProcess"
+      block
     >
-      {{ loading ? 'Logging in...' : 'Log-in' }}
+      Login
     </v-btn>
   </v-form>
 </template>
