@@ -19,13 +19,46 @@ onUnmounted(() => {
 const email = ref('')
 const password = ref('')
 const isFormValid = ref(false)
-const emailRules = [(v) => !!v || 'This field is required']
-const passwordRules = [(v) => !!v || 'This field is required']
+const loading = ref(false)
+const error = ref('')
+
+const emailRules = [
+  (v) => !!v || 'Email is required',
+  (v) => /.+@.+\..+/.test(v) || 'Email must be valid',
+]
+const passwordRules = [
+  (v) => !!v || 'Password is required',
+  (v) => v.length >= 6 || 'Password must be at least 6 characters',
+]
+
 const router = useRouter()
 
 async function handleSubmit() {
-  if (email.value && password.value) {
-    router.push('/dashboard')
+  error.value = ''
+  if (!email.value || !password.value) {
+    error.value = 'Please fill in all fields'
+    return
+  }
+
+  loading.value = true
+  try {
+    // Simulated login - replace with actual API call
+    const user = {
+      email: email.value,
+      id: Date.now(),
+      name: email.value.split('@')[0],
+    }
+
+    // Store user data
+    localStorage.setItem('user', JSON.stringify(user))
+
+    // Navigate to dashboard
+    await router.push('/dashboard')
+  } catch (err) {
+    error.value = 'Invalid email or password'
+    console.error('Login error:', err)
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -57,36 +90,44 @@ async function handleSubmit() {
               </v-col>
             </v-row>
 
-            <v-text-field
-              v-model="email"
-              label="Email address"
-              variant="outlined"
-              class="mb-3"
-              type="email"
-              prepend-inner-icon="mdi-email"
-              :rules="emailRules"
-              hide-details="auto"
-            />
+            <v-alert v-if="error" type="error" class="mb-4" density="compact" closable>
+              {{ error }}
+            </v-alert>
 
-            <v-text-field
-              v-model="password"
-              label="Password"
-              variant="outlined"
-              type="password"
-              class="mb-3"
-              prepend-inner-icon="mdi-lock"
-              :rules="passwordRules"
-              hide-details="auto"
-            />
+            <v-form @submit.prevent="handleSubmit">
+              <v-text-field
+                v-model="email"
+                label="Email address"
+                variant="outlined"
+                class="mb-3"
+                type="email"
+                prepend-inner-icon="mdi-email"
+                :rules="emailRules"
+                required
+              />
 
-            <v-btn
-              color="orange"
-              class="white--text mb-3 font-weight-bold"
-              block
-              @click="handleSubmit"
-            >
-              Sign In
-            </v-btn>
+              <v-text-field
+                v-model="password"
+                label="Password"
+                variant="outlined"
+                type="password"
+                class="mb-3"
+                prepend-inner-icon="mdi-lock"
+                :rules="passwordRules"
+                required
+              />
+
+              <v-btn
+                color="orange"
+                class="white--text mb-3 font-weight-bold"
+                block
+                type="submit"
+                :loading="loading"
+                :disabled="loading"
+              >
+                Sign In
+              </v-btn>
+            </v-form>
 
             <v-col class="text-center">
               Don't have an account?
