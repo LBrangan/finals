@@ -1,46 +1,53 @@
 <script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import LoginForm from '@/components/auth/LoginForm.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 
-const theme = ref('light')
-const email = ref('')
-const password = ref('')
-const emailRules = [(v) => !!v || 'This field is required']
-const passwordRules = [(v) => !!v || 'This field is required']
+const router = useRouter()
+const isMobile = ref(window.innerWidth < 960)
+const isFormValid = ref(false)
 
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
+const updateMobile = () => {
+  isMobile.value = window.innerWidth < 960
 }
 
+const handleSubmit = () => {
+  // Add login logic here
+  router.push('/dashboard')
+}
 
+onMounted(() => {
+  window.addEventListener('resize', updateMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateMobile)
+})
 </script>
 
 <template>
-  <v-app :theme="theme">
-    <!-- Floating Dark Mode Toggle -->
-    <v-btn
-      icon
-      :color="theme === 'light' ? 'yellow darken-3' : 'blue-grey darken-3'"
-      @click="onClick"
-      class="floating-toggle"
-    >
-      <v-icon>{{ theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-    </v-btn>
-
-    <v-main>
-      <v-container
-        fluid
-        class="bg-amber-lighten-2 d-flex align-center justify-center"
-        style="min-height: 100vh"
-      >
-        <v-row justify="center">
-          <!-- Left Column -->
-          <v-col cols="12" md="8" lg="6" class="text-center">
-            <img src="@/assets/background.jpg" alt="Logo" />
+  <AppLayout>
+    <template #content>
+      <v-container fluid>
+        <v-row justify="center" align="center" class="fill-height">
+          <!-- Left Column - Image -->
+          <v-col
+            :cols="isMobile ? 12 : 8"
+            :md="8"
+            :lg="6"
+            :class="{ 'text-center': !isMobile, 'd-none': isMobile }"
+          >
+            <img src="@/assets/background.jpg" alt="Logo" class="login-image" />
           </v-col>
 
-          <!-- Right Column -->
-          <v-col cols="12" md="4" p="5">
+          <!-- Right Column - Login Form -->
+          <v-col
+            :cols="isMobile ? 12 : 4"
+            :md="4"
+            :class="isMobile ? 'px-4' : ''"
+            :p="isMobile ? 3 : 5"
+          >
             <v-card class="pa-6" elevation="2" rounded="lg">
               <v-row justify="center">
                 <v-col cols="12" class="text-center">
@@ -49,40 +56,11 @@ function onClick() {
                 </v-col>
               </v-row>
 
-              <!-- Email Field -->
-              <v-text-field
-                v-model="email"
-                label="Email address"
-                variant="outlined"
-                class="mb-3"
-                type="email"
-                prepend-inner-icon="mdi-email"
-                :rules="emailRules"
-                hide-details="auto"
-              ></v-text-field>
-
-              <!-- Password Field -->
-              <v-text-field
-                v-model="password"
-                label="Password"
-                variant="outlined"
-                type="password"
-                class="mb-3"
-                prepend-inner-icon="mdi-lock"
-                :rules="passwordRules"
-                hide-details="auto"
-              ></v-text-field>
-
-              <!-- Continue Button -->
-              <v-btn
-                color="orange"
-                class="white--text mb-3 font-weight-bold"
-                block
-                :to="'/dashboard'"
-                component="RouterLink"
-              >
-                Sign In
-              </v-btn>
+              <LoginForm
+                @submit="handleSubmit"
+                :valid="isFormValid"
+                @update:valid="(val) => (isFormValid = val)"
+              />
 
               <!-- Sign Up Link -->
               <v-col class="text-center">
@@ -98,15 +76,15 @@ function onClick() {
 
             <!-- Forgot Password Link -->
             <v-col class="text-center">
-              <a href="#" class="text-decoration-none font-weight-bold" style="color: orange">
+              <a href="#" class="text-decoration-none font-weight-bold" style="color: black">
                 Forgot Password?
               </a>
             </v-col>
           </v-col>
         </v-row>
       </v-container>
-    </v-main>
-  </v-app>
+    </template>
+  </AppLayout>
 </template>
 
 <style scoped>
@@ -118,6 +96,22 @@ function onClick() {
 }
 
 .bg-amber-lighten-2 {
-  background-color: #ffd54f !important; /* Adjust this color if needed */
+  background-color: #ffd54f !important;
+}
+
+.fill-height {
+  min-height: 100vh;
+}
+
+.login-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 960px) {
+  .v-col {
+    padding: 12px !important;
+  }
 }
 </style>

@@ -1,140 +1,86 @@
 <script setup>
-import { ref } from 'vue'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import RegisterForm from '@/components/auth/RegisterForm.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const theme = ref('light')
-
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
+const isMobile = ref(window.innerWidth < 960)
+const updateMobile = () => {
+  isMobile.value = window.innerWidth < 960
 }
+
+onMounted(() => {
+  window.addEventListener('resize', updateMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateMobile)
+})
 </script>
 
 <template>
-  <v-responsive class="border rounded">
-    <v-app :theme="theme">
-      <!-- Floating Dark Mode Toggle -->
-      <v-btn
-        icon
-        :color="theme === 'light' ? 'yellow darken-3' : 'blue-grey darken-3'"
-        @click="onClick"
-        class="floating-toggle"
-      >
-        <v-icon>{{ theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-      </v-btn>
-
-      <v-main>
-        <v-container fluid class="bg-amber-lighten-2 fill-height">
-          <v-row align="center" justify="center">
-            <v-col cols="12" md="10">
-              <v-row>
-                <!-- Logo Section -->
-                <v-col cols="12" md="8" lg="6" class="d-flex align-center justify-center pa-8">
-            <img src="@/assets/background.jpg" alt="Logo" />
+  <AppLayout>
+    <template #content>
+      <v-container fluid>
+        <v-row justify="center" align="center" class="fill-height">
+          <!-- Left Column - Image -->
+          <v-col
+            :cols="isMobile ? 12 : 8"
+            :md="8"
+            :lg="6"
+            :class="{ 'text-center': !isMobile, 'd-none': isMobile }"
+          >
+            <img src="@/assets/background.jpg" alt="Logo" class="login-image" />
           </v-col>
 
-                <!-- Form Section -->
-                <v-col cols="12" md="6">
-                  <v-card class="pa-6" elevation="2" rounded="lg">
-                    <v-row justify="center">
-                      <v-col cols="12" class="text-center">
-                        <h1 class="mt-2 mb-4 font-weight-bold">Create Account</h1>
-                        <h2 class="mt-2 mb-4 text-subtitle-2">Create account to get started</h2>
-                      </v-col>
-                    </v-row>
-
-                    <v-row dense>
-                      <v-col cols="6">
-                        <v-text-field
-                          label="First name"
-                          variant="outlined"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-
-                      <v-col cols="6">
-                        <v-text-field
-                          label="Last name"
-                          variant="outlined"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-                    </v-row>
-
-                    <v-row dense>
-                      <v-col>
-                        <v-text-field
-                          label="Program"
-                          variant="outlined"
-                          class="mb-3 mt-1"
-                          prepend-inner-icon="mdi-rename"
-                          hide-details
-                        />
-                      </v-col>
-                    </v-row>
-
-                    <v-text-field
-                      label="Email address"
-                      variant="outlined"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-email"
-                      hide-details
-                    />
-
-                    <v-text-field
-                      label="Password"
-                      variant="outlined"
-                      type="password"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-lock"
-                      hide-details
-                    />
-
-                    <v-text-field
-                      label="Confirm password"
-                      variant="outlined"
-                      type="password"
-                      class="mb-3"
-                      prepend-inner-icon="mdi-lock"
-                      hide-details
-                    />
-
-                    <v-btn color="orange" class="white--text mb-3 font-weight-bold" block>
-                      Sign Up
-                    </v-btn>
-
-                    <v-col class="text-center">
-                      Already have an account?
-                      <RouterLink
-                        to="/"
-                        class="text-decoration-none font-weight-bold text-orange text--darken-3"
-                        >Sign In</RouterLink
-                      >
-                    </v-col>
-                  </v-card>
+          <!-- Right Column - Register Form -->
+          <v-col
+            :cols="isMobile ? 12 : 4"
+            :md="4"
+            :class="isMobile ? 'px-4' : ''"
+            :p="isMobile ? 3 : 5"
+          >
+            <v-card class="pa-6" elevation="2" rounded="lg">
+              <v-row justify="center">
+                <v-col cols="12" class="text-center">
+                  <h1 class="mt-2 font-weight-bold">Create Account</h1>
+                  <h2 class="mt-2 mb-2 text-subtitle-2">Sign up to get started!</h2>
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-main>
-    </v-app>
-  </v-responsive>
+
+              <RegisterForm :isMobile="isMobile"></RegisterForm>
+
+              <!-- Sign In Link -->
+              <v-col class="text-center">
+                Already have an account?
+                <RouterLink
+                  to="/"
+                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
+                >
+                  Sign In
+                </RouterLink>
+              </v-col>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </AppLayout>
 </template>
 
 <style scoped>
-.floating-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.bg-amber-lighten-2 {
-  background-color: #ffd54f;
-}
-
 .fill-height {
   min-height: 100vh;
+}
+
+.login-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 960px) {
+  .v-col {
+    padding: 12px !important;
+  }
 }
 </style>
