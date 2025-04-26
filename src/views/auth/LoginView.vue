@@ -56,7 +56,11 @@ onUnmounted(() => {
                 </v-col>
               </v-row>
 
-              <LoginForm @submit="handleSubmit" v-model:valid="isFormValid"></LoginForm>
+              <LoginForm
+                @submit="handleSubmit"
+                :valid="isFormValid"
+                @update:valid="(val) => (isFormValid = val)"
+              />
 
               <!-- Sign Up Link -->
               <v-col class="text-center">
