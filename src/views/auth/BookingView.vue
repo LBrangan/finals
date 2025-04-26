@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import TheNavbar from '@/components/layout/TheNavbar.vue'
 
 const router = useRouter()
 const selectedSubject = ref(null)
@@ -41,6 +42,7 @@ function bookSession() {
 
 <template>
   <v-app>
+    <TheNavbar />
     <v-main class="booking-bg">
       <v-container fluid>
         <v-row class="justify-center">
