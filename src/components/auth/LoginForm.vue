@@ -1,60 +1,38 @@
 <script setup>
+import AlertNotification from '@/components/common/AlertNotification.vue'
 import { requiredValidator, emailValidator } from '@/utils/validators'
-import { useToast } from 'vue-toastification'
 import { ref } from 'vue'
+import { useLogin } from '@/composables/auth/login'
 
-const email = ref('')
-const password = ref('')
+const { formData, formAction, refVForm, onFormSubmit } = useLogin()
+
 const isPasswordVisible = ref(false)
-const isFormValid = ref(false)
-const loading = ref(false)
-const form = ref(null)
-const toast = useToast()
-
-const emit = defineEmits(['submit', 'update:valid'])
-
-const handleSubmit = async () => {
-  const { valid } = await form.value.validate()
-
-  if (valid) {
-    loading.value = true
-    try {
-      emit('submit', { email: email.value, password: password.value })
-      toast.success('Login successful!')
-    } catch (error) {
-      console.error('Login error:', error)
-      toast.error('Login failed. Please try again.')
-    } finally {
-      loading.value = false
-    }
-  }
-}
-
-const rules = {
-  email: [requiredValidator, emailValidator],
-  password: [requiredValidator],
-}
 </script>
 
 <template>
-  <v-form
-    ref="form"
-    v-model="isFormValid"
-    @submit.prevent="handleSubmit"
-    @update:modelValue="emit('update:valid', $event)"
-  >
+  <AlertNotification
+    :formSuccessMessage="formAction.formSuccessMessage"
+    :formErrorMessage="formAction.formErrorMessage"
+  ></AlertNotification>
+
+  <v-form ref="refVForm" @submit.prevent="onFormSubmit">
+    <v-row dense>
+      <v-col cols="12">
+        <v-text-field
+          v-model="formData.email"
+          label="Email address"
+          variant="outlined"
+          class="mb-3"
+          type="email"
+          prepend-inner-icon="mdi-email"
+          :rules="[requiredValidator, emailValidator]"
+          :disabled="loading"
+          hide-details="auto"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+
     <!-- Email Field -->
-    <v-text-field
-      v-model="email"
-      label="Email address"
-      variant="outlined"
-      class="mb-3"
-      type="email"
-      prepend-inner-icon="mdi-email"
-      :rules="rules.email"
-      :disabled="loading"
-      hide-details="auto"
-    ></v-text-field>
 
     <!-- Password Field -->
     <v-text-field
@@ -65,8 +43,8 @@ const rules = {
       variant="outlined"
       :type="isPasswordVisible ? 'text' : 'password'"
       class="mb-3"
-      prepend-inner-icon="mdi-lock"
-      :rules="rules.password"
+      prepend-inner-icon="mdi-lock-outline"
+      :rules="[requiredValidator]"
       :disabled="loading"
       hide-details="auto"
     ></v-text-field>
@@ -75,13 +53,13 @@ const rules = {
     <v-btn
       color="orange"
       class="white--text mb-3 font-weight-bold"
-      block
-      type="submit"
-      :loading="loading"
-      :disabled="!isFormValid || loading"
       prepend-icon="mdi-login"
+      type="submit"
+      :loading="formAction.formProcess"
+      :disabled="formAction.formProcess"
+      block
     >
-      {{ loading ? 'Logging in...' : 'Log-in' }}
+      Login
     </v-btn>
   </v-form>
 </template>
