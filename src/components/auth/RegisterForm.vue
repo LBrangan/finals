@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import {
   requiredValidator,
   emailValidator,
@@ -16,17 +17,16 @@ const props = defineProps({
   },
 })
 
-// Form data
-const form = ref({
+const formDataDefault = {
   firstName: '',
   lastName: '',
   program: '',
   email: '',
   password: '',
   confirmPassword: '',
-})
+}
 
-// Form validation
+const formData = ref({ ...formDataDefault })
 const errors = ref({
   firstName: '',
   lastName: '',
@@ -38,16 +38,27 @@ const errors = ref({
 
 const isPasswordVisible = ref(false)
 const loading = ref(false)
+const form = ref(null)
+
+const toast = useToast()
+const router = useRouter()
 
 const handleSubmit = async () => {
-  loading.value = true
-  try {
-    // Add registration logic here
-    console.log('Form submitted:', form.value)
-  } catch (error) {
-    console.error('Registration error:', error)
-  } finally {
-    loading.value = false
+  const { valid } = await form.value.validate()
+
+  if (valid) {
+    loading.value = true
+    try {
+      // Add your registration logic here
+      console.log('Form submitted:', formData.value)
+      toast.success('Registration successful!')
+      router.push('/') // Redirect to login page
+    } catch (error) {
+      console.error('Registration error:', error)
+      toast.error('Registration failed. Please try again.')
+    } finally {
+      loading.value = false
+    }
   }
 }
 </script>
@@ -62,110 +73,111 @@ const handleSubmit = async () => {
         </v-col>
       </v-row>
 
-      <v-row dense>
-        <v-col cols="6">
-          <v-text-field
-            v-model="form.firstName"
-            label="First name"
-            variant="outlined"
-            prepend-inner-icon="mdi-account"
-            :error-messages="errors.firstName"
-            @input="errors.firstName = ''"
-            :rules="[requiredValidator]"
-          ></v-text-field>
-        </v-col>
+      <v-form ref="form" @submit.prevent="handleSubmit">
+        <v-row dense>
+          <v-col cols="6">
+            <v-text-field
+              v-model="formData.firstName"
+              label="First name"
+              variant="outlined"
+              prepend-inner-icon="mdi-account"
+              :error-messages="errors.firstName"
+              @input="errors.firstName = ''"
+              :rules="[requiredValidator]"
+            ></v-text-field>
+          </v-col>
 
-        <v-col cols="6">
-          <v-text-field
-            v-model="form.lastName"
-            label="Last name"
-            variant="outlined"
-            prepend-inner-icon="mdi-account"
-            :error-messages="errors.lastName"
-            @input="errors.lastName = ''"
-            :rules="[requiredValidator]"
-          ></v-text-field>
-        </v-col>
-      </v-row>
+          <v-col cols="6">
+            <v-text-field
+              v-model="formData.lastName"
+              label="Last name"
+              variant="outlined"
+              prepend-inner-icon="mdi-account"
+              :error-messages="errors.lastName"
+              @input="errors.lastName = ''"
+              :rules="[requiredValidator]"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-      <v-row dense>
-        <v-col>
-          <v-text-field
-            v-model="form.program"
-            label="Program"
-            variant="outlined"
-            class="mb-3 mt-1"
-            prepend-inner-icon="mdi-school"
-            :error-messages="errors.program"
-            @input="errors.program = ''"
-            :rules="[requiredValidator]"
-          ></v-text-field>
-        </v-col>
-      </v-row>
+        <v-row dense>
+          <v-col>
+            <v-text-field
+              v-model="formData.program"
+              label="Program"
+              variant="outlined"
+              class="mb-3 mt-1"
+              prepend-inner-icon="mdi-school"
+              :error-messages="errors.program"
+              @input="errors.program = ''"
+              :rules="[requiredValidator]"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-      <v-text-field
-        v-model="form.email"
-        label="Email address"
-        variant="outlined"
-        class="mb-3"
-        type="email"
-        prepend-inner-icon="mdi-email"
-        :error-messages="errors.email"
-        @input="errors.email = ''"
-        :rules="[requiredValidator, emailValidator]"
-      ></v-text-field>
+        <v-text-field
+          v-model="formData.email"
+          label="Email address"
+          variant="outlined"
+          class="mb-3"
+          type="email"
+          prepend-inner-icon="mdi-email"
+          :error-messages="errors.email"
+          @input="errors.email = ''"
+          :rules="[requiredValidator, emailValidator]"
+        ></v-text-field>
 
-      <v-text-field
-        v-model="form.password"
-        label="Password"
-        variant="outlined"
-        :type="isPasswordVisible ? 'text' : 'password'"
-        class="mb-3"
-        prepend-inner-icon="mdi-lock"
-        :error-messages="errors.password"
-        @input="errors.password = ''"
-        @click:append="isPasswordVisible = !isPasswordVisible"
-        :append-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
-        :rules="[requiredValidator, passwordValidator]"
-        hint="Minimum 8 characters"
-      ></v-text-field>
+        <v-text-field
+          v-model="formData.password"
+          label="Password"
+          variant="outlined"
+          :type="isPasswordVisible ? 'text' : 'password'"
+          class="mb-3"
+          prepend-inner-icon="mdi-lock"
+          :error-messages="errors.password"
+          @input="errors.password = ''"
+          :append-inner-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="isPasswordVisible = !isPasswordVisible"
+          :rules="[requiredValidator, passwordValidator]"
+          hint="Minimum 8 characters"
+        ></v-text-field>
 
-      <v-text-field
-        v-model="form.confirmPassword"
-        label="Confirm password"
-        variant="outlined"
-        :type="isPasswordVisible ? 'text' : 'password'"
-        class="mb-3"
-        prepend-inner-icon="mdi-lock"
-        :error-messages="errors.confirmPassword"
-        @input="errors.confirmPassword = ''"
-        :append-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
-        :rules="[
-          requiredValidator,
-          (val) => confirmedValidator(val, form.password),
-          (val) => val.length >= 8 || 'Password must be at least 8 characters',
-        ]"
-        hint="Minimum 8 characters"
-      ></v-text-field>
+        <v-text-field
+          v-model="formData.confirmPassword"
+          label="Confirm password"
+          variant="outlined"
+          :type="isPasswordVisible ? 'text' : 'password'"
+          class="mb-3"
+          prepend-inner-icon="mdi-lock"
+          :error-messages="errors.confirmPassword"
+          @input="errors.confirmPassword = ''"
+          :append-inner-icon="isPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="isPasswordVisible = !isPasswordVisible"
+          :rules="[requiredValidator, (val) => confirmedValidator(val, formData.password)]"
+          hint="Minimum 8 characters"
+        ></v-text-field>
 
-      <v-btn
-        color="orange"
-        class="white--text mb-3 font-weight-bold"
-        block
-        :loading="loading"
-        @click="handleSubmit"
-        :disabled="loading"
-        prepend-icon="mdi-account-plus"
-      >
-        Register
-      </v-btn>
-
-      <v-col class="text-center">
-        Already have an account?
-        <RouterLink to="/" class="text-decoration-none font-weight-bold text-orange text--darken-3"
-          >Sign In</RouterLink
+        <v-btn
+          color="orange"
+          class="white--text mb-3 font-weight-bold"
+          block
+          :loading="loading"
+          @click="handleSubmit"
+          :disabled="loading"
+          prepend-icon="mdi-account-plus"
         >
-      </v-col>
+          Register
+        </v-btn>
+
+        <v-col class="text-center">
+          Already have an account?
+          <RouterLink
+            to="/"
+            class="text-decoration-none font-weight-bold text-orange text--darken-3"
+            >Sign In</RouterLink
+          >
+        </v-col>
+      </v-form>
     </v-card>
   </v-col>
 </template>
