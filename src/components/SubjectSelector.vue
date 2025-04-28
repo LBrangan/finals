@@ -25,6 +25,7 @@ export default {
   },
 }
 </script>
+
 <template>
   <v-form>
     <v-select
@@ -36,6 +37,6 @@ export default {
       clearable
       prepend-icon="mdi-book"
       @change="updateSubject"
-    ></v-select
-  ></v-form>
+    ></v-select>
+  </v-form>
 </template>
