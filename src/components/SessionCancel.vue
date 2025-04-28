@@ -1,44 +1,31 @@
 <script>
+import { useToast } from 'vue-toastification'
+import { computed } from 'vue'
+
 export default {
   props: {
-    session: {
-      type: Object,
+    show: Boolean,
+    sessionId: {
+      type: [String, Number],
       required: true,
     },
-    show: Boolean,
   },
-  data() {
+  setup(props, { emit }) {
+    const dialogVisible = computed({
+      get: () => props.show,
+      set: (value) => emit('update:show', value),
+    })
+
     return {
-      newDate: this.session?.date,
-      newTime: this.session?.time,
-      availableTimes: [
-        '09:00 AM',
-        '10:00 AM',
-        '11:00 AM',
-        '01:00 PM',
-        '02:00 PM',
-        '03:00 PM',
-        '04:00 PM',
-      ],
+      dialogVisible,
     }
   },
-  computed: {
-    dialogVisible: {
-      get() {
-        return this.show
-      },
-      set(value) {
-        this.$emit('update:show', value)
-      },
-    },
-  },
   methods: {
-    confirmReschedule() {
-      this.$emit('reschedule', {
-        ...this.session,
-        date: this.newDate,
-        time: this.newTime,
-      })
+    confirmCancel() {
+      const toast = useToast()
+      // Emit the cancel event with the session ID
+      this.$emit('cancel', this.sessionId)
+      toast.success('Session cancelled successfully!')
     },
     closeDialog() {
       this.$emit('update:show', false)
@@ -48,35 +35,45 @@ export default {
 </script>
 
 <template>
-  <v-dialog v-model="dialogVisible" max-width="500px">
-    <v-card>
-      <v-card-title class="text-h5 bg-amber-lighten-4"> Reschedule Session </v-card-title>
+  <v-dialog v-model="dialogVisible" max-width="400px" persistent>
+    <v-card class="cancel-dialog">
+      <v-card-title class="text-h5 bg-error-lighten-5 py-3">
+        <v-icon color="error" class="mr-2">mdi-alert-circle</v-icon>
+        Cancel Session
+      </v-card-title>
 
       <v-card-text class="pt-4">
-        <v-container>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="newDate"
-                label="New Date"
-                type="date"
-                :min="new Date().toISOString().split('T')[0]"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-select v-model="newTime" :items="availableTimes" label="New Time"></v-select>
-            </v-col>
-          </v-row>
-        </v-container>
+        <p class="text-body-1">Are you sure you want to cancel this session?</p>
+        <p class="text-caption mt-2 text-grey">This action cannot be undone.</p>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions class="pb-4 px-4">
         <v-spacer></v-spacer>
-        <v-btn color="grey" variant="text" @click="closeDialog"> Cancel </v-btn>
-        <v-btn color="amber-darken-2" @click="confirmReschedule" :disabled="!newDate || !newTime">
-          Confirm
+        <v-btn
+          color="grey-darken-1"
+          variant="text"
+          @click="closeDialog"
+          class="mr-2"
+          min-width="90"
+        >
+          No, Keep
+        </v-btn>
+        <v-btn color="error" variant="elevated" @click="confirmCancel" min-width="90">
+          Yes, Cancel
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
+
+<style scoped>
+.cancel-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.v-btn {
+  text-transform: none;
+  font-weight: 500;
+}
+</style>
