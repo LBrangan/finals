@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
-import DashboardView from '@/views/auth/DashboardView.vue'
-import ProfilesView from '@/views/auth/ProfilesView.vue'
-import BookingView from '@/views/auth/BookingView.vue'
+import DashboardView from '@/views/system/DashboardView.vue'
+import ProfilesView from '@/views/system/ProfilesView.vue'
+import BookingView from '@/views/system/BookingView.vue'
 import SessionsView from '@/components/SessionsView.vue'
 
 const router = createRouter({
