@@ -1,6 +1,6 @@
-cula off
 <script setup>
 import TheNavbar from '@/components/layout/TheNavbar.vue'
+
 import { ref, onMounted } from 'vue'
 
 const userName = ref('')
@@ -24,7 +24,10 @@ onMounted(() => {
     <TheNavbar />
     <v-main class="fill-height main-bg">
       <v-container class="pt-8 pt-md-16 px-4">
-        <!-- Welcome Section -->
+        <!-- Add ProfileHeader here -->
+        <ProfileHeader />
+
+        <!-- Existing content... -->
         <v-row align="center" justify="center" class="text-center">
           <v-col cols="12" md="8" class="welcome-section">
             <h1 class="text-h3 font-weight-bold mb-3 responsive-title">

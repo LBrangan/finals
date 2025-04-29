@@ -123,6 +123,24 @@ const isConfirmPasswordVisible = ref(false)
               hide-details="auto"
             />
           </v-col>
+
+          <!-- Add this inside your form, after the name fields -->
+          <v-col cols="12">
+            <v-select
+              v-model="formData.role"
+              label="Register as"
+              variant="outlined"
+              class="mb-3"
+              prepend-inner-icon="mdi-account-convert"
+              :items="[
+                { title: 'Tutee', value: 'tutee' },
+                { title: 'Tutor', value: 'tutor' },
+              ]"
+              :rules="[requiredValidator]"
+              :disabled="formAction.formProcess"
+              hide-details="auto"
+            />
+          </v-col>
         </v-row>
 
         <v-btn
