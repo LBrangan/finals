@@ -4,7 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
 import ProfilesView from '@/views/system/ProfilesView.vue'
 import BookingView from '@/views/system/BookingView.vue'
-import SessionsView from '@/components/SessionsView.vue'
+import SessionsView from '@/views/system/bookings/SessionsView.vue'
 import { supabase } from '@/utils/supabase.js'
 
 const router = createRouter({
