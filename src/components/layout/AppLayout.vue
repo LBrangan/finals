@@ -1,39 +1,89 @@
 <script setup>
-import { ref } from 'vue'
+import ProfileHeader from '@/components/layout/navigation/TopProfileNavigation.vue'
+import { useAuthUserStore } from '@/stores/authUser'
+import { onMounted, ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
-const theme = ref('light')
-function onClick() {
+const props = defineProps(['isWithAppBarNavIcon'])
+
+const emit = defineEmits(['isDrawerVisible', 'theme'])
+
+// Utilize pre-defined vue functions
+const { xs, sm, mobile } = useDisplay()
+
+// Use Pinia Store
+const authStore = useAuthUserStore()
+
+// Load Variables
+const isLoggedIn = ref(false)
+const isMobileLogged = ref(false)
+const isDesktop = ref(false)
+const theme = ref(localStorage.getItem('theme') ?? 'light')
+
+//  Toggle Theme
+const onToggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+  localStorage.setItem('theme', theme.value)
+  emit('theme', theme.value)
 }
+
+// Load Functions during component rendering
+onMounted(async () => {
+  isLoggedIn.value = await authStore.isAuthenticated()
+  isMobileLogged.value = mobile.value && isLoggedIn.value
+  isDesktop.value = !mobile.value && (isLoggedIn.value || !isLoggedIn.value)
+})
 </script>
 
 <template>
-  <v-responsive class="border rounded">
+  <v-responsive>
     <v-app :theme="theme">
-      <!-- Floating Dark Mode Toggle -->
-      <v-btn
-        icon
-        :color="theme === 'light' ? 'yellow darken-3' : 'blue-grey darken-3'"
-        @click="onClick"
-        class="floating-toggle"
-      >
-        <v-icon>{{ theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-      </v-btn>
+      <v-app-bar class="px-3" :color="theme === 'light' ? 'red-lighten-2' : 'red-darken-4'" border>
+        <v-app-bar-nav-icon
+          v-if="props.isWithAppBarNavIcon"
+          icon="mdi-menu"
+          :theme="theme"
+          @click="emit('isDrawerVisible')"
+        >
+        </v-app-bar-nav-icon>
+
+        <v-app-bar-title>
+          <v-img src="/images/logo-shop.png" :width="xs ? '100%' : sm ? '40%' : '14%'"></v-img>
+        </v-app-bar-title>
+
+        <v-spacer></v-spacer>
+
+        <v-btn
+          class="me-2"
+          :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+          variant="elevated"
+          slim
+          @click="onToggleTheme"
+        ></v-btn>
+
+        <ProfileHeader v-if="isLoggedIn"></ProfileHeader>
+      </v-app-bar>
+
+      <slot name="navigation"></slot>
 
       <v-main>
-        <v-container fluid class="bg-amber-lighten-2 fill-height">
-          <slot name="content"></slot>
-        </v-container>
+        <slot name="content"></slot>
       </v-main>
+
+      <v-footer
+        v-if="!isMobileLogged || isDesktop"
+        class="font-weight-bold"
+        :class="mobile ? 'text-caption' : ''"
+        :color="theme === 'light' ? 'red-lighten-2' : 'red-darken-4'"
+        border
+        app
+      >
+        <div :class="mobile ? 'w-100 text-center' : ''">
+          Copyright © 2024 - Shirlix Meatshop | All Rights Reserved
+        </div>
+      </v-footer>
+
+      <BottomNavigation v-else-if="isMobileLogged" :theme="theme"></BottomNavigation>
     </v-app>
   </v-responsive>
 </template>
-
-<style scoped>
-.floating-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-</style>
