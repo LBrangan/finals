@@ -1,5 +1,5 @@
 <script setup>
-import TheNavbar from '@/components/layout/navigation/TheNavbar.vue'
+import TheNavbar from '@/components/layout/TheNavbar.vue'
 
 import { ref, onMounted } from 'vue'
 

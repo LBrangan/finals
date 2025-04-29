@@ -1,5 +1,5 @@
 <script setup>
-import AppLayout from '@/components/layout/navigation/AppLayout.vue'
+import AppLayout from '@/components/layout/AppLayout.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 

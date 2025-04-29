@@ -1,10 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
+// Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
+
+// System Views
 import DashboardView from '@/views/system/DashboardView.vue'
 import ProfilesView from '@/views/system/ProfilesView.vue'
 import BookingView from '@/views/system/BookingView.vue'
-import SessionsView from '@/views/system/bookings/SessionsView.vue'
+import SessionsView from '@/components/layout/system/bookings/SessionsView.vue'
+
+// Utils
 import { supabase } from '@/utils/supabase.js'
 
 const router = createRouter({
