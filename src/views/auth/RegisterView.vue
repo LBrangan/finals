@@ -20,7 +20,7 @@ onUnmounted(() => {
 <template>
   <AppLayout>
     <template #content>
-      <v-container fluid>
+      <v-container fluid class="register-container">
         <v-row align="center" justify="center">
           <v-col :cols="isMobile ? 12 : 11" :sm="isMobile ? 12 : 11" :md="10" :lg="9">
             <v-row>
@@ -31,7 +31,7 @@ onUnmounted(() => {
                 :class="{ 'd-none': isMobile, 'd-md-flex': !isMobile }"
                 class="align-center justify-center pa-8"
               >
-                <img src="@/assets/background.jpg" alt="Logo" class="responsive-img" />
+                <img src="/images/background.jpg" alt="Logo" class="responsive-img" />
               </v-col>
 
               <!-- Form Section -->
@@ -45,28 +45,20 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.bg-amber-lighten-2 {
-  background-color: #ffd54f;
+.register-container {
+  background: #ffd54f;
+  min-height: 100vh;
 }
 
-.fill-height {
-  min-height: 100vh;
+.v-col {
+  transition: all 0.3s ease;
 }
 
 .responsive-img {
   max-width: 100%;
   height: auto;
   object-fit: contain;
-}
-
-@media (max-width: 600px) {
-  .floating-toggle {
-    top: 10px;
-    right: 10px;
-  }
-}
-
-.v-col {
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(245, 124, 81, 0.15);
 }
 </style>

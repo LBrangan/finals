@@ -17,14 +17,13 @@ defineProps({
 })
 
 const { formData, formAction, refVForm, onFormSubmit } = useRegister()
-
 const isPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
 </script>
 
 <template>
   <v-col cols="12" md="6" class="pa-8">
-    <v-card class="pa-6" elevation="2" rounded="lg">
+    <v-card class="pa-6 auth-card" elevation="2" rounded="lg">
       <v-row justify="center">
         <v-col cols="12" class="text-center">
           <h1 class="mt-2 font-weight-bold">Create Account</h1>
@@ -144,8 +143,8 @@ const isConfirmPasswordVisible = ref(false)
         </v-row>
 
         <v-btn
-          color="orange"
-          class="white--text mb-3 font-weight-bold"
+          color="#F57C51"
+          class="register-btn"
           prepend-icon="mdi-account-plus"
           type="submit"
           :loading="formAction.formProcess"
@@ -159,20 +158,36 @@ const isConfirmPasswordVisible = ref(false)
       <!-- Sign In Link -->
       <v-col class="text-center">
         Already have an account?
-        <RouterLink to="/" class="text-decoration-none font-weight-bold text-orange text--darken-3">
-          Sign In
-        </RouterLink>
+        <RouterLink to="/" class="signin-link"> Sign In </RouterLink>
       </v-col>
     </v-card>
   </v-col>
 </template>
 
 <style scoped>
-.v-text-field {
-  border-radius: 8px;
+.register-btn {
+  margin-top: 1rem;
+  height: 48px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #f6f8e2 !important;
+  transition: all 0.3s ease;
 }
 
-:deep(.v-field) {
-  border-radius: 8px !important;
+.register-btn:hover {
+  background-color: #fcbc58 !important;
+  transform: translateY(-2px);
+}
+
+.signin-link {
+  color: #f57c51 !important;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.signin-link:hover {
+  color: #fcbc58 !important;
+  text-decoration: underline;
 }
 </style>
