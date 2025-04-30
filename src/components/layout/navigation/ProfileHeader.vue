@@ -46,8 +46,8 @@ const onLogout = async () => {
         >
         </v-avatar>
 
-        <v-avatar v-else color="orange-darken-3" size="large">
-          <span class="text-h5">
+        <v-avatar v-else class="profile-avatar" size="large">
+          <span class="text-h6 font-weight-bold">
             {{ getAvatarText(authStore.userData.firstname + ' ' + authStore.userData.lastname) }}
           </span>
         </v-avatar>
@@ -102,3 +102,14 @@ const onLogout = async () => {
     </v-card>
   </v-menu>
 </template>
+
+<style scoped>
+.profile-avatar {
+  background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+  color: white;
+}
+
+.profile-avatar span {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+</style>
