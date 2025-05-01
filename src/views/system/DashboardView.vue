@@ -1,4 +1,5 @@
 <script setup>
+import SideNavigation from '@/components/layout/navigation/SideNavigation.vue'
 import WelcomeWidget from '@/components/system/dashboard/WelcomeWidget.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -12,9 +13,15 @@ const authStore = useAuthUserStore()
 const { mobile } = useDisplay()
 
 // Load Variables
-const isSuperAdmin = authStore.userRole === 'Super Administrator'
-const isDrawerVisible = ref(mobile.value ? false : true)
+const isTutor = ref(authStore.userRole === 'Tutor')
+const isTutee = ref(authStore.userRole === 'Tutee')
+const isDrawerVisible = ref(!mobile.value)
 const theme = ref(localStorage.getItem('theme') ?? 'light')
+
+// Toggle drawer
+const toggleDrawer = () => {
+  isDrawerVisible.value = !isDrawerVisible.value
+}
 
 // On Theme Update
 const onThemeUpdate = (value) => {
@@ -26,15 +33,31 @@ const onThemeUpdate = (value) => {
   <AppLayout
     :is-with-app-bar-nav-icon="true"
     :transparent="true"
-    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
+    @is-drawer-visible="toggleDrawer"
     @theme="onThemeUpdate"
   >
+    <template #navigation>
+      <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
+    </template>
+
     <template #content>
       <v-container fluid>
         <v-row>
-          <v-col cols="12" :md="isSuperAdmin ? 7 : false">
-            <WelcomeWidget :theme="theme"></WelcomeWidget>
-          </v-col>
+          <!-- Tutor View -->
+          <template v-if="isTutor">
+            <v-col cols="12">
+              <WelcomeWidget :theme="theme"></WelcomeWidget>
+            </v-col>
+            <!-- Add more tutor specific components here -->
+          </template>
+
+          <!-- Tutee View -->
+          <template v-if="isTutee">
+            <v-col cols="12">
+              <WelcomeWidget :theme="theme"></WelcomeWidget>
+            </v-col>
+            <!-- Add more tutee specific components here -->
+          </template>
         </v-row>
       </v-container>
     </template>
@@ -46,21 +69,5 @@ const onThemeUpdate = (value) => {
   background: linear-gradient(135deg, #ffd54f 0%, #ffecb3 100%);
   min-height: 100vh;
   padding: 20px;
-}
-
-.feature-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  transition: transform 0.3s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-}
-
-/* Add background blur effect for transparent navbar */
-::v-deep(.v-app-bar) {
-  backdrop-filter: blur(10px);
-  background-color: rgba(255, 255, 255, 0.7) !important;
 }
 </style>
