@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import TheNavbar from '@/components/layout/TheNavbar.vue'
-import SubjectSelector from '@/components/layout/system/bookings/SubjectSelector.vue'
-import DateSelector from '@/components/layout/system/bookings/DateSelector.vue'
-import BookingConfirmation from '@/components/layout/system/bookings/BookingConfirmation.vue'
+import SubjectSelector from '@/components/system/bookings/SubjectSelector.vue'
+import DateSelector from '@/components/system/bookings/DateSelector.vue'
+import BookingConfirmation from '@/components/system/bookings/BookingConfirmation.vue'
 
 const router = useRouter()
 const form = ref(null)
