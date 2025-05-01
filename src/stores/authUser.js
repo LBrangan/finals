@@ -102,7 +102,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
     // Upload the file with the user ID and file extension
     const { data, error } = await supabase.storage
-      .from('shirlix')
+      .from('LearnMate')
       .upload('avatars/' + userData.value.id + '-avatar.png', file, {
         cacheControl: '3600',
         upsert: true,
