@@ -37,8 +37,8 @@ const onLogout = async () => {
 <template>
   <v-menu min-width="280px" rounded offset="5" transition="scale-transition">
     <template #activator="{ props }">
-      <v-btn icon v-bind="props" class="profile-btn">
-        <v-avatar class="user-avatar" size="42">
+      <v-btn icon v-bind="props" class="profile-btn ms-auto">
+        <v-avatar class="user-avatar" size="42 ">
           <v-img
             v-if="authStore.userData.image_url"
             :src="authStore.userData.image_url"

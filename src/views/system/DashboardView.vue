@@ -1,5 +1,4 @@
 <script setup>
-import SideNavigation from '@/components/layout/navigation/SideNavigation.vue'
 import WelcomeWidget from '@/components/system/dashboard/WelcomeWidget.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -37,7 +36,7 @@ const onThemeUpdate = (value) => {
     @theme="onThemeUpdate"
   >
     <template #navigation>
-      <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
+      <SideNavigation v-model:isDrawerVisible="isDrawerVisible" />
     </template>
 
     <template #content>
