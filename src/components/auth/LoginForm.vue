@@ -7,27 +7,16 @@ import { useLogin } from '@/composables/auth/login'
 const { formData, formAction, refVForm, onFormSubmit } = useLogin()
 const isPasswordVisible = ref(false)
 
-// Define emits for form validation
-defineEmits(['update:valid', 'submit'])
-
-defineProps({
-  valid: {
-    type: Boolean,
-    default: false,
-  },
-})
-
-// Make sure password is included in formData
-formData.value.password = ''
+// Remove inject vuetify
 </script>
 
 <template>
   <AlertNotification
-    :formSuccessMessage="formAction.formSuccessMessage"
-    :formErrorMessage="formAction.formErrorMessage"
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
 
-  <v-form ref="refVForm" @submit.prevent="onFormSubmit">
+  <v-form ref="refVForm" @submit.prevent="onFormSubmit" class="auth-form">
     <v-row dense>
       <v-col cols="12">
         <v-text-field
@@ -61,8 +50,8 @@ formData.value.password = ''
 
     <!-- Login Button -->
     <v-btn
-      color="orange"
-      class="white--text mb-3 font-weight-bold"
+      color="#F57C51"
+      class="login-btn"
       prepend-icon="mdi-login"
       type="submit"
       :loading="formAction.formProcess"
@@ -73,3 +62,20 @@ formData.value.password = ''
     </v-btn>
   </v-form>
 </template>
+
+<style scoped>
+.login-btn {
+  margin-top: 1rem;
+  height: 48px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: white !important;
+  background-color: #f57c51 !important;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #fcbc58 !important;
+  transform: translateY(-2px);
+}
+</style>

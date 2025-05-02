@@ -29,7 +29,7 @@ onUnmounted(() => {
 <template>
   <AppLayout>
     <template #content>
-      <v-container fluid>
+      <v-container fluid class="login-container">
         <v-row justify="center" align="center" class="fill-height">
           <!-- Left Column - Image -->
           <v-col
@@ -38,7 +38,7 @@ onUnmounted(() => {
             :lg="6"
             :class="{ 'text-center': !isMobile, 'd-none': isMobile }"
           >
-            <img src="@/assets/background.jpg" alt="Logo" class="login-image" />
+            <img src="/images/background.jpg" alt="Logo" class="login-image" />
           </v-col>
 
           <!-- Right Column - Login Form -->
@@ -48,7 +48,7 @@ onUnmounted(() => {
             :class="isMobile ? 'px-4' : ''"
             :p="isMobile ? 3 : 5"
           >
-            <v-card class="pa-6" elevation="2" rounded="lg">
+            <v-card class="pa-6 auth-card" elevation="2" rounded="lg">
               <v-row justify="center">
                 <v-col cols="12" class="text-center">
                   <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
@@ -61,12 +61,7 @@ onUnmounted(() => {
               <!-- Sign Up Link -->
               <v-col class="text-center">
                 Don't have an account?
-                <RouterLink
-                  to="/register"
-                  class="text-decoration-none font-weight-bold text-orange text--darken-3"
-                >
-                  Sign Up
-                </RouterLink>
+                <RouterLink to="/register" class="signup-link">Sign Up</RouterLink>
               </v-col>
             </v-card>
 
@@ -84,15 +79,21 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.floating-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
+.signup-link {
+  color: #f57c51 !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: all 0.3s ease;
 }
 
-.bg-amber-lighten-2 {
-  background-color: #ffd54f !important;
+.forgot-link {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .fill-height {

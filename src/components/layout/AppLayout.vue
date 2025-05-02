@@ -1,26 +1,33 @@
 <script setup>
-import { ref } from 'vue'
+import TopProfileNavigation from '@/components/layout/navigation/TopProfileNavigation.vue'
+import { useAuthUserStore } from '@/stores/authUser'
+import { onMounted, ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
-const theme = ref('light')
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
-}
+// Utilize pre-defined vue functions
+const { mobile } = useDisplay()
+
+// Use Pinia Store
+const authStore = useAuthUserStore()
+
+// Load Variables
+const isLoggedIn = ref(false)
+const isMobileLogged = ref(false)
+const isDesktop = ref(false)
+
+onMounted(async () => {
+  isLoggedIn.value = await authStore.isAuthenticated()
+  isMobileLogged.value = mobile.value && isLoggedIn.value
+  isDesktop.value = !mobile.value && (isLoggedIn.value || !isLoggedIn.value)
+})
 </script>
 
 <template>
-  <v-responsive class="border rounded">
-    <v-app :theme="theme">
-      <!-- Floating Dark Mode Toggle -->
-      <v-btn
-        icon
-        :color="theme === 'light' ? 'yellow darken-3' : 'blue-grey darken-3'"
-        @click="onClick"
-        class="floating-toggle"
-      >
-        <v-icon>{{ theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-      </v-btn>
+  <v-responsive>
+    <v-app class="bg-amber-lighten-2">
+      <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
 
-      <v-main>
+      <v-main :class="{ 'with-drawer': isLoggedIn }">
         <v-container fluid class="bg-amber-lighten-2 fill-height">
           <slot name="content"></slot>
         </v-container>
@@ -29,11 +36,4 @@ function onClick() {
   </v-responsive>
 </template>
 
-<style scoped>
-.floating-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-</style>
+<style scoped></style>
