@@ -4,6 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 
 // System Views
 import DashboardView from '@/views/system/DashboardView.vue'
+import TutorDashboardView from '@/views/system/TutorDashboardView.vue'
 import ProfilesView from '@/views/system/ProfilesView.vue'
 import BookingView from '@/views/system/BookingView.vue'
 import SessionsView from '@/components/system/bookings/SessionsView.vue'
@@ -50,6 +51,12 @@ export const routes = [
     path: '/account/settings',
     name: 'account-settings',
     component: AccountSettingsView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/tutor/dashboard',
+    name: 'tutor-dashboard',
+    component: TutorDashboardView,
     meta: { requiresAuth: true },
   },
 ]

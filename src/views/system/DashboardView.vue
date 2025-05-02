@@ -1,5 +1,6 @@
 <script setup>
 import WelcomeWidget from '@/components/system/dashboard/WelcomeWidget.vue'
+import TutorDashboard from '@/views/system/TutorDashboardView.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
@@ -45,7 +46,7 @@ const onThemeUpdate = (value) => {
           <!-- Tutor View -->
           <template v-if="isTutor">
             <v-col cols="12">
-              <WelcomeWidget :theme="theme"></WelcomeWidget>
+              <TutorDashboard></TutorDashboard>
             </v-col>
             <!-- Add more tutor specific components here -->
           </template>

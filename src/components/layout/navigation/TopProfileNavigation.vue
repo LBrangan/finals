@@ -5,35 +5,19 @@ import { getAvatarText } from '@/utils/helpers'
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 
-// Utilize pre-defined vue functions
+// Router setup
 const router = useRouter()
 
-// Use Pinia Store
+// Store setup
 const authStore = useAuthUserStore()
 
-// Load Variables
-const formAction = ref({
-  ...formActionDefault,
-})
+// Reactive refs
+const formAction = ref({ ...formActionDefault })
+const tab = ref(null)
+const xs = ref(false) // Add breakpoint refs
+const sm = ref(false)
 
-// Logout Functionality
-const onLogout = async () => {
-  /// Reset Form Action utils; Turn on processing at the same time
-  formAction.value = { ...formActionDefault, formProcess: true }
-
-  // Get supabase logout functionality
-  await supabase.auth.signOut()
-
-  formAction.value.formProcess = false
-  // Reset State
-  setTimeout(() => {
-    authStore.$reset()
-  }, 2500)
-  // Redirect to homepage
-  router.replace('/')
-}
-
-// Navigation items based on user role
+// Computed navigation items based on user role
 const navigationItems = computed(() => {
   if (authStore.userRole === 'Tutor') {
     return [
@@ -49,6 +33,21 @@ const navigationItems = computed(() => {
     { title: 'My Sessions', icon: 'mdi-calendar-clock', to: '/sessions' },
   ]
 })
+
+// Logout handler
+const onLogout = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  await supabase.auth.signOut()
+
+  formAction.value.formProcess = false
+
+  setTimeout(() => {
+    authStore.$reset()
+  }, 2500)
+
+  router.replace('/')
+}
 </script>
 
 <template>
@@ -56,8 +55,8 @@ const navigationItems = computed(() => {
     <!-- Logo -->
     <v-app-bar-icon>
       <v-app-bar-nav-icon>
-        <v-img src="/images/navbar-logo.png" :width="xs ? '100%' : sm ? '40%' : '14%'"></v-img
-      ></v-app-bar-nav-icon>
+        <v-img src="/images/navbar-logo.png" :width="xs ? '100%' : sm ? '40%' : '14%'"></v-img>
+      </v-app-bar-nav-icon>
     </v-app-bar-icon>
     <v-app-bar-title class="title">LearnMate</v-app-bar-title>
 
