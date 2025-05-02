@@ -3,6 +3,7 @@ import PasswordForm from '@/components/system/account-settings/PasswordForm.vue'
 import PictureForm from '@/components/system/account-settings/PictureForm.vue'
 import ProfileForm from '@/components/system/account-settings/ProfileForm.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import SideNavigation from '@/components/layout/navigation/SideNavigation.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
@@ -94,7 +95,7 @@ const isDrawerVisible = ref(mobile.value ? false : true)
             </v-card>
 
             <v-card
-              v-if="authStore.userRole === 'Super Administrator'"
+              v-if="authStore.userRole === 'Tutee' || authStore.userRole === 'Tutor'"
               class="mb-5"
               title="Change Password"
             >

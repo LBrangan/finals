@@ -14,17 +14,6 @@ const authStore = useAuthUserStore()
 const isLoggedIn = ref(false)
 const isMobileLogged = ref(false)
 const isDesktop = ref(false)
-const props = defineProps(['isWithAppBarNavIcon'])
-
-const emit = defineEmits(['isDrawerVisible', 'theme'])
-
-// Toggle Theme
-const theme = ref('light')
-const onToggleTheme = () => {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
-  localStorage.setItem('theme', theme.value)
-  emit('theme', theme.value)
-}
 
 onMounted(async () => {
   isLoggedIn.value = await authStore.isAuthenticated()
@@ -35,30 +24,8 @@ onMounted(async () => {
 
 <template>
   <v-responsive>
-    <v-app :theme="theme">
-      <v-app-bar
-        class="px-3"
-        :color="theme === 'light' ? 'amber darken-3' : 'blue-grey darken-3'"
-        border
-      >
-        <v-app-bar-nav-icon
-          v-if="props.isWithAppBarNavIcon"
-          icon="mdi-menu"
-          :theme="theme"
-          @click="$emit('isDrawerVisible')"
-        >
-        </v-app-bar-nav-icon>
-
-        <v-btn
-          class="ms-auto"
-          :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          variant="elevated"
-          slim
-          @click="onToggleTheme"
-        >
-        </v-btn>
-        <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
-      </v-app-bar>
+    <v-app class="bg-amber-lighten-2">
+      <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
 
       <v-main :class="{ 'with-drawer': isLoggedIn }">
         <v-container fluid class="bg-amber-lighten-2 fill-height">
