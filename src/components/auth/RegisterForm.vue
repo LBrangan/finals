@@ -26,8 +26,8 @@ const isConfirmPasswordVisible = ref(false)
     <v-card class="pa-6 auth-card" elevation="2" rounded="lg">
       <v-row justify="center">
         <v-col cols="12" class="text-center">
-          <h1 class="mt-2 font-weight-bold">Create Account</h1>
-          <h2 class="mt-2 mb-2 text-subtitle-2">Sign up for LearnMate!</h2>
+          <h1 class="mt-2 font-weight-bold">Create Student Account</h1>
+          <h2 class="mt-2 mb-2 text-subtitle-2">Sign up as a Student!</h2>
         </v-col>
       </v-row>
 
@@ -122,24 +122,6 @@ const isConfirmPasswordVisible = ref(false)
               hide-details="auto"
             />
           </v-col>
-
-          <!-- Add this inside your form, after the name fields -->
-          <v-col cols="12">
-            <v-select
-              v-model="formData.role"
-              label="Register as"
-              variant="outlined"
-              class="mb-3"
-              prepend-inner-icon="mdi-account-convert"
-              :items="[
-                { title: 'Tutee', value: 'tutee' },
-                { title: 'Tutor', value: 'tutor' },
-              ]"
-              :rules="[requiredValidator]"
-              :disabled="formAction.formProcess"
-              hide-details="auto"
-            />
-          </v-col>
         </v-row>
 
         <v-btn
@@ -151,7 +133,7 @@ const isConfirmPasswordVisible = ref(false)
           :disabled="formAction.formProcess"
           block
         >
-          Register
+          Register as Student
         </v-btn>
       </v-form>
 
