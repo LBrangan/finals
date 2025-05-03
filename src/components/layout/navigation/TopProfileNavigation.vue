@@ -251,7 +251,7 @@ const drawerItems = computed(() => [
 .role-chip {
   width: 100%;
   justify-content: center;
-  background-color: #76e90aea;
+  background-color: #5cd320ea;
   font-weight: 600;
 }
 

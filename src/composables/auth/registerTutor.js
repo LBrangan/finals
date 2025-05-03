@@ -1,140 +1,23 @@
-import { supabase } from '@/utils/supabase'
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
+import { formActionDefault, supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
-import { formActionDefault } from '@/utils/supabase'
+import { ref } from 'vue'
 
-// Auth Store Definition
-export const useAuthUserStore = defineStore('authUser', () => {
-  const userData = ref(null)
-  const authPages = ref([])
-  const authBranchIds = ref([])
-  const userRole = ref(null)
-
-  const userRoleComputed = computed(() => {
-    if (!userData.value) return null
-    return userData.value.role === 'tutor' ? 'Tutor' : 'Tutee'
-  })
-
-  function $reset() {
-    userData.value = null
-    authPages.value = []
-    authBranchIds.value = []
-  }
-
-  async function isAuthenticated() {
-    const { data } = await supabase.auth.getSession()
-    if (data.session) {
-      const { id, email, user_metadata } = data.session.user
-      userData.value = { id, email, ...user_metadata }
-    }
-    return !!data.session
-  }
-
-  async function getUserInformation() {
-    const {
-      data: {
-        user: { id, email, user_metadata },
-      },
-    } = await supabase.auth.getUser()
-    userData.value = { id, email, ...user_metadata }
-  }
-
-  async function getAuthPages(name) {
-    const { data } = await supabase
-      .from('user_roles')
-      .select('*, pages: user_role_pages (page)')
-      .eq('user_role', name)
-    if (data.length > 0) authPages.value = data[0].pages.map((p) => p.page)
-  }
-
-  async function getAuthBranchIds() {
-    const { data } = await supabase
-      .from('branches')
-      .select('id')
-      .in('name', userData.value.branch.split(','))
-    authBranchIds.value = data.map((b) => b.id)
-  }
-
-  async function updateUserInformation(updatedData) {
-    const {
-      data: {
-        user: { id, email, user_metadata },
-      },
-      error,
-    } = await supabase.auth.updateUser({
-      data: { ...updatedData },
-    })
-    if (error) {
-      return { error }
-    } else if (user_metadata) {
-      userData.value = { id, email, ...user_metadata }
-      return { data: userData.value }
-    }
-  }
-
-  async function updateUserImage(file) {
-    const { data, error } = await supabase.storage
-      .from('LearnMate')
-      .upload('avatars/' + userData.value.id + '-avatar.png', file, {
-        cacheControl: '3600',
-        upsert: true,
-      })
-    if (error) {
-      return { error }
-    } else if (data) {
-      const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
-      return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })
-    }
-  }
-
-  const fetchUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-      if (profile) {
-        userData.value = profile
-        userRole.value = profile.role
-      }
-    }
-  }
-
-  return {
-    userData,
-    userRole: userRoleComputed,
-    authPages,
-    authBranchIds,
-    $reset,
-    isAuthenticated,
-    getUserInformation,
-    getAuthPages,
-    getAuthBranchIds,
-    updateUserInformation,
-    updateUserImage,
-    fetchUser,
-  }
-})
-
-// Register Tutor Composable
 export function useRegisterTutor() {
   const router = useRouter()
-  const authStore = useAuthUserStore()
 
-  const formData = ref({
+  const formDataDefault = {
     email: '',
     password: '',
     firstname: '',
     lastname: '',
+    subjects: [], // Array of subject IDs
     bio: '',
-    program: '',
-  })
+    education: '',
+    hourlyRate: '',
+    availability: [], // Array of available time slots
+  }
 
+  const formData = ref({ ...formDataDefault })
   const formAction = ref({ ...formActionDefault })
   const refVForm = ref()
 
@@ -142,6 +25,7 @@ export function useRegisterTutor() {
     formAction.value = { ...formActionDefault, formProcess: true }
 
     try {
+      // 1. Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.value.email,
         password: formData.value.password,
@@ -149,25 +33,27 @@ export function useRegisterTutor() {
 
       if (authError) throw authError
 
+      // 2. Create profile record
       const { error: profileError } = await supabase.from('profiles').insert({
-        id: authData.user.id,
+        auth_users_id: authData.user.id,
         firstname: formData.value.firstname,
         lastname: formData.value.lastname,
         email: formData.value.email,
         role: 'Tutor',
         bio: formData.value.bio,
-        program: formData.value.program,
+        education: formData.value.education,
+        hourly_rate: formData.value.hourlyRate,
       })
 
       if (profileError) throw profileError
 
-      await authStore.fetchUser()
-      formAction.value.formSuccessMessage = 'Registration successful!'
-      router.replace('/tutor/dashboard')
+      formAction.value.formSuccessMessage = 'Tutor registration successful!'
+      router.replace('/dashboard')
     } catch (error) {
-      console.error('Registration error:', error)
       formAction.value.formErrorMessage = error.message
+      formAction.value.formStatus = error.status
     } finally {
+      refVForm.value?.reset()
       formAction.value.formProcess = false
     }
   }
