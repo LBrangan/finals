@@ -36,7 +36,7 @@ onMounted(async () => {
 
 <template>
   <v-responsive>
-    <v-app class="bg-amber-lighten-2">
+    <v-app>
       <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
 
       <v-main :class="{ 'with-drawer': isLoggedIn }">

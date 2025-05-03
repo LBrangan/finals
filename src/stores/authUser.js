@@ -1,16 +1,17 @@
-import { supabase } from '@/utils/supabase'
-import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 export const useAuthUserStore = defineStore('authUser', () => {
   // States
   const userData = ref(null)
   const authPages = ref([])
   const authBranchIds = ref([])
+  const userRole = ref(null)
 
   // Getters
   // Computed Properties; Use for getting the state but not modifying its reactive state
-  const userRole = computed(() => {
+  const userRoleComputed = computed(() => {
     if (!userData.value) return null
     return userData.value.role === 'tutor' ? 'Tutor' : 'Tutee'
   })
@@ -122,9 +123,29 @@ export const useAuthUserStore = defineStore('authUser', () => {
     }
   }
 
+  // Fetch User Information
+  const fetchUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (user) {
+      // Get extended profile data including role
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (profile) {
+        userData.value = profile
+        userRole.value = profile.role
+      }
+    }
+  }
+
   return {
     userData,
     userRole,
+    userRoleComputed,
     authPages,
     authBranchIds,
     $reset,
@@ -134,5 +155,6 @@ export const useAuthUserStore = defineStore('authUser', () => {
     getAuthBranchIds,
     updateUserInformation,
     updateUserImage,
+    fetchUser,
   }
 })
