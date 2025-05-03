@@ -1,17 +1,16 @@
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
 import { supabase } from '@/utils/supabase'
+import { computed, ref } from 'vue'
+import { defineStore } from 'pinia'
 
 export const useAuthUserStore = defineStore('authUser', () => {
   // States
   const userData = ref(null)
   const authPages = ref([])
   const authBranchIds = ref([])
-  const userRole = ref(null)
 
   // Getters
   // Computed Properties; Use for getting the state but not modifying its reactive state
-  const userRoleComputed = computed(() => {
+  const userRole = computed(() => {
     if (!userData.value) return null
     return userData.value.role === 'tutor' ? 'Tutor' : 'Tutee'
   })
@@ -116,36 +115,16 @@ export const useAuthUserStore = defineStore('authUser', () => {
     // If no error set data to userData state with the image_url
     else if (data) {
       // Retrieve Image Public Url
-      const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
+      const { data: imageData } = supabase.storage.from('learnmate').getPublicUrl(data.path)
 
       // Update the user information with the new image_url
       return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })
     }
   }
 
-  // Fetch User Information
-  const fetchUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (user) {
-      // Get extended profile data including role
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      if (profile) {
-        userData.value = profile
-        userRole.value = profile.role
-      }
-    }
-  }
-
   return {
     userData,
     userRole,
-    userRoleComputed,
     authPages,
     authBranchIds,
     $reset,
@@ -155,6 +134,5 @@ export const useAuthUserStore = defineStore('authUser', () => {
     getAuthBranchIds,
     updateUserInformation,
     updateUserImage,
-    fetchUser,
   }
 })

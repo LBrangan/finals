@@ -1,22 +1,28 @@
 <script setup>
 import WelcomeWidget from '@/components/system/dashboard/WelcomeWidget.vue'
-import TutorDashboard from '@/views/system/TutorDashboardView.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-// Use Pinia Store
+// Use Pinia Store and Router
 const authStore = useAuthUserStore()
+const router = useRouter()
 
 // Utilize pre-defined vue functions
 const { mobile } = useDisplay()
 
 // Load Variables
-const isTutor = ref(authStore.userRole === 'Tutor')
-const isTutee = ref(authStore.userRole === 'Tutee')
 const isDrawerVisible = ref(!mobile.value)
 const theme = ref(localStorage.getItem('theme') ?? 'light')
+
+// Check user role and redirect if necessary
+onMounted(() => {
+  if (authStore.userRole === 'Tutor') {
+    router.replace('/tutor/dashboard')
+  }
+})
 
 // Toggle drawer
 const toggleDrawer = () => {
@@ -36,28 +42,14 @@ const onThemeUpdate = (value) => {
     @is-drawer-visible="toggleDrawer"
     @theme="onThemeUpdate"
   >
-    <template #navigation>
-      <SideNavigation v-model:isDrawerVisible="isDrawerVisible" />
-    </template>
-
     <template #content>
       <v-container fluid>
         <v-row>
-          <!-- Tutor View -->
-          <template v-if="isTutor">
-            <v-col cols="12">
-              <TutorDashboard></TutorDashboard>
-            </v-col>
-            <!-- Add more tutor specific components here -->
-          </template>
-
-          <!-- Tutee View -->
-          <template v-if="isTutee">
-            <v-col cols="12">
-              <WelcomeWidget :theme="theme"></WelcomeWidget>
-            </v-col>
-            <!-- Add more tutee specific components here -->
-          </template>
+          <!-- Tutee View Only -->
+          <v-col cols="12">
+            <WelcomeWidget :theme="theme"></WelcomeWidget>
+          </v-col>
+          <!-- Add more tutee specific components here -->
         </v-row>
       </v-container>
     </template>
