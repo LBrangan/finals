@@ -1,33 +1,33 @@
-<script>
-export default {
-  props: {
-    selectedSubject: String,
-    selectedDate: String,
-    selectedTime: String,
-    selectedLocation: String,
-    agreeTerms: Boolean,
-  },
-  data() {
-    return {
-      localAgreeTerms: this.agreeTerms,
-    }
-  },
-  watch: {
-    localAgreeTerms(newValue) {
-      this.updateTerms(newValue)
-    },
-  },
-  methods: {
-    confirmBooking() {
-      this.$emit('confirm-booking')
-    },
-    updateTerms(value) {
-      this.$emit('update-terms', value)
-    },
-  },
+<script setup>
+import { useSession } from '@/composables/useSession'
+
+const props = defineProps({
+  selectedSubject: String,
+  selectedDate: String,
+  selectedTime: String,
+  selectedLocation: String,
+  agreeTerms: Boolean,
+  tutorId: String,
+})
+
+const emit = defineEmits(['confirm-booking', 'booking-error'])
+const { createSession } = useSession()
+
+const confirmBooking = async () => {
+  try {
+    await createSession({
+      tutorId: props.tutorId,
+      subjectId: props.selectedSubject,
+      date: props.selectedDate,
+      time: props.selectedTime,
+    })
+    emit('confirm-booking')
+  } catch (error) {
+    emit('booking-error', error)
+  }
 }
 </script>
-v-model="localAgreeTerms"
+
 <template>
   <h3>Confirm Your Booking</h3>
   <p>

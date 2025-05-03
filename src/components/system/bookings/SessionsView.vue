@@ -1,121 +1,73 @@
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useSession } from '@/composables/useSession'
 import { useToast } from 'vue-toastification'
 import SessionsReschedule from './SessionsReschedule.vue'
 import SessionCancel from './SessionCancel.vue'
 
-export default {
-  components: {
-    SessionsReschedule,
-    SessionCancel,
-  },
-  data() {
-    return {
-      tab: null,
-      sessions: JSON.parse(localStorage.getItem('sessions') || '[]'),
-      showReschedule: false,
-      selectedSession: null,
-      showCancel: false,
-      sessionToCancel: null,
-    }
-  },
-  mounted() {
-    window.addEventListener('storage', this.handleStorageChange)
-  },
-  beforeUnmount() {
-    window.removeEventListener('storage', this.handleStorageChange)
-  },
-  computed: {
-    upcomingSessions() {
-      const now = new Date()
-      return this.sessions.filter((session) => new Date(session.date) >= now)
-    },
-    pastSessions() {
-      const now = new Date()
-      return this.sessions.filter((session) => new Date(session.date) < now)
-    },
-  },
-  methods: {
-    formatDate(date) {
-      return new Date(date).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    },
-    handleStorageChange(e) {
-      if (e.key === 'sessions') {
-        this.sessions = JSON.parse(e.newValue || '[]')
-      }
-    },
-    openReschedule(session) {
-      this.selectedSession = session
-      this.showReschedule = true
-    },
-    handleReschedule(updatedSession) {
-      const toast = useToast()
-      const index = this.sessions.findIndex((s) => s.id === updatedSession.id)
-      if (index !== -1) {
-        this.sessions[index] = updatedSession
-        localStorage.setItem('sessions', JSON.stringify(this.sessions))
-        this.showReschedule = false
-        toast.success('Session rescheduled successfully!')
-      }
-    },
-    async cancelSession(sessionId) {
-      const toast = useToast()
+const toast = useToast()
+const { sessions, fetchSessions, updateSession, deleteSession } = useSession()
 
-      const toastId = toast.info('Are you sure you want to cancel this session?', {
-        timeout: false,
-        closeOnClick: false,
-        closeButton: false,
-        position: 'top-center',
-        containerClassName: 'cancel-session-toast',
-        component: {
-          template: `
-            <div class="d-flex justify-space-between align-center pa-2">
-              <span>Are you sure you want to cancel this session?</span>
-              <div class="ml-4">
-                <v-btn color="error" size="small" class="mr-2" @click="confirmCancel">Yes</v-btn>
-                <v-btn color="primary" size="small" @click="cancelAction">No</v-btn>
-              </div>
-            </div>
-          `,
-          methods: {
-            confirmCancel() {
-              this.$emit('action')
-            },
-            cancelAction() {
-              this.$emit('cancel')
-            },
-          },
-        },
-        action: {
-          onClick: () => {
-            this.sessions = this.sessions.filter((s) => s.id !== sessionId)
-            localStorage.setItem('sessions', JSON.stringify(this.sessions))
-            toast.dismiss(toastId)
-            toast.success('Session cancelled successfully!')
-          },
-        },
-        cancel: {
-          onClick: () => {
-            toast.dismiss(toastId)
-          },
-        },
-      })
-    },
-    openCancelDialog(sessionId) {
-      this.sessionToCancel = sessionId
-      this.showCancel = true
-    },
-    handleCancelSession(sessionId) {
-      this.sessions = this.sessions.filter((s) => s.id !== sessionId)
-      localStorage.setItem('sessions', JSON.stringify(this.sessions))
-      this.showCancel = false
-    },
-  },
+const tab = ref(null)
+const showReschedule = ref(false)
+const selectedSession = ref(null)
+const showCancel = ref(false)
+const sessionToCancel = ref(null)
+
+const upcomingSessions = computed(() => {
+  const now = new Date()
+  return sessions.value.filter((session) => new Date(session.available_date) >= now)
+})
+
+const pastSessions = computed(() => {
+  const now = new Date()
+  return sessions.value.filter((session) => new Date(session.available_date) < now)
+})
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
+
+const openReschedule = (session) => {
+  selectedSession.value = session
+  showReschedule.value = true
+}
+
+const handleReschedule = async (updatedSession) => {
+  try {
+    await updateSession(updatedSession.id, {
+      available_date: updatedSession.date,
+      available_time: updatedSession.time,
+    })
+    await fetchSessions()
+    showReschedule.value = false
+    toast.success('Session rescheduled successfully!')
+  } catch (err) {
+    console.error('Reschedule error:', err)
+    toast.error('Failed to reschedule session')
+  }
+}
+
+const handleCancelSession = async (sessionId) => {
+  try {
+    await deleteSession(sessionId)
+    await fetchSessions()
+    showCancel.value = false
+    toast.success('Session cancelled successfully!')
+  } catch (err) {
+    console.error('Cancel error:', err)
+    toast.error('Failed to cancel session')
+  }
+}
+
+onMounted(() => {
+  fetchSessions()
+})
 </script>
 
 <template>
