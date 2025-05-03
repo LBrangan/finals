@@ -2,20 +2,43 @@
 import { supabase, formActionDefault } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
 import { getAvatarText } from '@/utils/helpers'
-import { useRouter } from 'vue-router'
-import { ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, computed, watch, onMounted } from 'vue'
 
 // Router setup
 const router = useRouter()
+const route = useRoute()
 
 // Store setup
 const authStore = useAuthUserStore()
 
-// Reactive refs
-const formAction = ref({ ...formActionDefault })
+// Add visibility control
+const isVisible = ref(false)
+
+// Check authentication and update visibility
+const checkAuth = async () => {
+  const isAuth = await authStore.isAuthenticated()
+  isVisible.value = isAuth && !['/', '/register', '/tutor-register'].includes(route.path)
+}
+
+// Watch for route changes
+watch(() => route.path, checkAuth)
+
+// Check auth status on component mount
+onMounted(checkAuth)
+
+// Display setup for responsive design
+const { xs, sm, mdAndUp } = useDisplay()
 const tab = ref(null)
-const xs = ref(false) // Add breakpoint refs
-const sm = ref(false)
+
+// Show/hide navigation based on screen size
+const showNavigation = computed(() => mdAndUp.value)
+const isCompact = computed(() => xs.value || sm.value)
+
+// Mobile menu control
+const formAction = ref({ ...formActionDefault })
+const mobileDrawer = ref(false)
 
 // Computed navigation items based on user role
 const navigationItems = computed(() => {
@@ -48,104 +71,137 @@ const onLogout = async () => {
 
   router.replace('/')
 }
+
+// Add mobile navigation items for drawer
+const drawerItems = computed(() => [
+  ...navigationItems.value,
+  { title: 'Account Settings', icon: 'mdi-wrench', to: '/account/settings' },
+  { title: 'Logout', icon: 'mdi-logout', to: null, action: onLogout },
+])
 </script>
 
 <template>
-  <v-app-bar elevation="1" color="amber-darken-2" class="app-bar">
-    <!-- Logo -->
-    <v-app-bar-icon>
-      <v-app-bar-nav-icon>
-        <v-img src="/images/navbar-logo.png" :width="xs ? '100%' : sm ? '40%' : '14%'"></v-img>
-      </v-app-bar-nav-icon>
-    </v-app-bar-icon>
-    <v-app-bar-title class="title">LearnMate</v-app-bar-title>
+  <template v-if="isVisible">
+    <v-app-bar elevation="1" color="amber-darken-2" class="app-bar">
+      <!-- Logo -->
+      <v-app-bar-title class="title" :class="{ 'text-subtitle-1': isCompact }">
+        LearnMate
+      </v-app-bar-title>
 
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-    <!-- Navigation Links -->
-    <v-tabs v-model="tab" color="amber-darken-2" class="hidden-sm-and-down me-4">
-      <v-tab v-for="item in navigationItems" :key="item.title" :to="item.to" :value="item.title">
-        <v-icon start>{{ item.icon }}</v-icon>
-        {{ item.title }}
-      </v-tab>
-    </v-tabs>
-
-    <!-- Profile Menu -->
-    <v-menu min-width="280px" rounded offset="5" transition="scale-transition">
-      <template #activator="{ props }">
-        <v-btn icon v-bind="props" class="profile-btn ms-auto">
-          <v-avatar class="user-avatar" size="42 ">
-            <v-img
-              v-if="authStore.userData.image_url"
-              :src="authStore.userData.image_url"
-              alt="User Avatar"
-            />
-            <span v-else class="text-h6 font-weight-bold">
-              {{ getAvatarText(authStore.userData.firstname + ' ' + authStore.userData.lastname) }}
-            </span>
-          </v-avatar>
-        </v-btn>
+      <!-- Navigation Links - Desktop -->
+      <template v-if="showNavigation">
+        <v-tabs v-model="tab" color="amber-darken-2" class="me-4">
+          <v-tab
+            v-for="item in navigationItems"
+            :key="item.title"
+            :to="item.to"
+            :value="item.title"
+          >
+            <v-icon start>{{ item.icon }}</v-icon>
+            {{ item.title }}
+          </v-tab>
+        </v-tabs>
       </template>
 
-      <v-card class="mt-1 profile-menu">
-        <v-card-text class="pa-4">
-          <v-list>
-            <v-list-item
-              :subtitle="authStore.userData.email"
-              :title="authStore.userData.firstname + ' ' + authStore.userData.lastname"
+      <!-- Mobile Menu Button -->
+      <template v-else>
+        <v-app-bar-nav-icon @click="mobileDrawer = !mobileDrawer"></v-app-bar-nav-icon>
+      </template>
+
+      <!-- Profile Menu -->
+      <v-menu min-width="280px" rounded offset="5" transition="scale-transition">
+        <template #activator="{ props }">
+          <v-btn icon v-bind="props" class="profile-btn ms-auto">
+            <v-avatar class="user-avatar" size="42 ">
+              <v-img
+                v-if="authStore.userData.image_url"
+                :src="authStore.userData.image_url"
+                alt="User Avatar"
+              />
+              <span v-else class="text-h6 font-weight-bold">
+                {{
+                  getAvatarText(authStore.userData.firstname + ' ' + authStore.userData.lastname)
+                }}
+              </span>
+            </v-avatar>
+          </v-btn>
+        </template>
+
+        <v-card class="mt-1 profile-menu">
+          <v-card-text class="pa-4">
+            <v-list>
+              <v-list-item
+                :subtitle="authStore.userData.email"
+                :title="authStore.userData.firstname + ' ' + authStore.userData.lastname"
+              >
+                <template #prepend>
+                  <v-avatar class="user-avatar-large" size="56" color="amber">
+                    <v-img
+                      v-if="authStore.userData.image_url"
+                      :src="authStore.userData.image_url"
+                      alt="User Avatar"
+                    />
+                    <span v-else class="text-h5">
+                      {{
+                        getAvatarText(
+                          authStore.userData.firstname + ' ' + authStore.userData.lastname,
+                        )
+                      }}
+                    </span>
+                  </v-avatar>
+                </template>
+              </v-list-item>
+            </v-list>
+
+            <v-chip class="mt-2 role-chip" label>
+              {{ authStore.userRole }}
+            </v-chip>
+
+            <v-divider class="my-3"></v-divider>
+
+            <v-btn
+              block
+              prepend-icon="mdi-wrench"
+              variant="outlined"
+              class="menu-btn mb-2"
+              to="/account/settings"
             >
-              <template #prepend>
-                <v-avatar class="user-avatar-large" size="56" color="amber">
-                  <v-img
-                    v-if="authStore.userData.image_url"
-                    :src="authStore.userData.image_url"
-                    alt="User Avatar"
-                  />
-                  <span v-else class="text-h5">
-                    {{
-                      getAvatarText(
-                        authStore.userData.firstname + ' ' + authStore.userData.lastname,
-                      )
-                    }}
-                  </span>
-                </v-avatar>
-              </template>
-            </v-list-item>
-          </v-list>
+              Account Settings
+            </v-btn>
 
-          <v-chip class="mt-2 role-chip" label>
-            {{ authStore.userRole }}
-          </v-chip>
+            <v-btn
+              block
+              prepend-icon="mdi-logout"
+              variant="outlined"
+              color="error"
+              class="menu-btn"
+              @click="onLogout"
+              :loading="formAction.formProcess"
+              :disabled="formAction.formProcess"
+            >
+              Logout
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </v-app-bar>
 
-          <v-divider class="my-3"></v-divider>
-
-          <v-btn
-            block
-            prepend-icon="mdi-wrench"
-            variant="outlined"
-            color="amber-darken-2"
-            class="menu-btn mb-2"
-            to="/account/settings"
-          >
-            Account Settings
-          </v-btn>
-
-          <v-btn
-            block
-            prepend-icon="mdi-logout"
-            variant="outlined"
-            color="error"
-            class="menu-btn"
-            @click="onLogout"
-            :loading="formAction.formProcess"
-            :disabled="formAction.formProcess"
-          >
-            Logout
-          </v-btn>
-        </v-card-text>
-      </v-card>
-    </v-menu>
-  </v-app-bar>
+    <!-- Mobile Navigation Drawer -->
+    <v-navigation-drawer v-model="mobileDrawer" temporary location="left" v-if="!showNavigation">
+      <v-list>
+        <v-list-item
+          v-for="item in drawerItems"
+          :key="item.title"
+          :to="item.to"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          @click="item.action ? item.action() : null"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </template>
 </template>
 
 <style scoped>
@@ -240,5 +296,33 @@ const onLogout = async () => {
 
 .app-bar {
   padding: 0 16px;
+}
+
+/* Add responsive styles */
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .app-bar {
+    padding: 0 8px;
+  }
+
+  .profile-btn {
+    margin-left: 8px;
+  }
+}
+
+.mobile-drawer {
+  background-color: #fff;
+}
+
+.mobile-drawer .v-list-item {
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+
+.mobile-drawer .v-list-item:hover {
+  background-color: rgba(255, 193, 7, 0.1);
 }
 </style>

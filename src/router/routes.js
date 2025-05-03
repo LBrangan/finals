@@ -1,10 +1,12 @@
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
+import TutorRegisterView from '@/views/auth/TutorRegisterView.vue'
+import TutorDashboardView from '@/views/system/TutorDashboardView.vue'
 
 // System Views
 import DashboardView from '@/views/system/DashboardView.vue'
-import TutorDashboardView from '@/views/system/TutorDashboardView.vue'
+
 import ProfilesView from '@/views/system/ProfilesView.vue'
 import BookingView from '@/views/system/BookingView.vue'
 import SessionsView from '@/components/system/bookings/SessionsView.vue'
@@ -15,14 +17,38 @@ export const routes = [
     path: '/',
     name: 'login',
     component: LoginView,
-    meta: { public: true },
+    meta: {
+      public: true,
+      authRedirect: '/dashboard', // Add this to specify where to redirect authenticated users
+    },
   },
   {
     path: '/register',
     name: 'register',
     component: RegisterView,
-    meta: { public: true },
+    meta: {
+      public: true,
+      authRedirect: '/dashboard',
+    },
   },
+
+  {
+    path: '/tutor-register',
+    name: 'tutor-register',
+    component: TutorRegisterView,
+    meta: {
+      public: true,
+      authRedirect: '/dashboard',
+    },
+  },
+
+  {
+    path: '/tutor/dashboard',
+    name: 'tutor-dashboard',
+    component: TutorDashboardView,
+    meta: { requiresAuth: true, role: 'Tutor' },
+  },
+
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -51,12 +77,6 @@ export const routes = [
     path: '/account/settings',
     name: 'account-settings',
     component: AccountSettingsView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/tutor/dashboard',
-    name: 'tutor-dashboard',
-    component: TutorDashboardView,
     meta: { requiresAuth: true },
   },
 ]

@@ -1,24 +1,36 @@
 <script setup>
 import TopProfileNavigation from '@/components/layout/navigation/TopProfileNavigation.vue'
 import { useAuthUserStore } from '@/stores/authUser'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useRouter, useRoute } from 'vue-router'
 
-// Utilize pre-defined vue functions
+const router = useRouter()
+const route = useRoute()
 const { mobile } = useDisplay()
-
-// Use Pinia Store
 const authStore = useAuthUserStore()
 
-// Load Variables
 const isLoggedIn = ref(false)
 const isMobileLogged = ref(false)
 const isDesktop = ref(false)
 
+const checkAuth = async () => {
+  const authenticated = await authStore.isAuthenticated()
+  isLoggedIn.value = authenticated
+  isMobileLogged.value = mobile.value && authenticated
+  isDesktop.value = !mobile.value && (authenticated || !authenticated)
+
+  // If user is authenticated and tries to access auth pages, redirect to dashboard
+  if (authenticated && ['/', '/register', '/tutor-register'].includes(route.path)) {
+    router.replace('/dashboard')
+  }
+}
+
+// Watch for route changes
+watch(() => route.path, checkAuth)
+
 onMounted(async () => {
-  isLoggedIn.value = await authStore.isAuthenticated()
-  isMobileLogged.value = mobile.value && isLoggedIn.value
-  isDesktop.value = !mobile.value && (isLoggedIn.value || !isLoggedIn.value)
+  await checkAuth()
 })
 </script>
 
