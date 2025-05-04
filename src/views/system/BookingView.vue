@@ -1,21 +1,22 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-import SubjectSelector from '@/components/system/bookings/SubjectSelector.vue'
-import DateSelector from '@/components/system/bookings/DateSelector.vue'
-import BookingConfirmation from '@/components/system/bookings/BookingConfirmation.vue'
+import SubjectSelector from '@/components/system/bookings/SubjectSelector.vue';
+import DateSelector from '@/components/system/bookings/DateSelector.vue';
+import BookingConfirmation from '@/components/system/bookings/BookingConfirmation.vue';
 
-const router = useRouter()
-const form = ref(null)
-const selectedSubject = ref(null)
-const selectedDate = ref(null)
-const selectedTime = ref(null)
-const selectedLocation = ref(null)
-const agreeTerms = ref(false)
-const email = ref('')
-const phone = ref('')
-const additionalNotes = ref('')
+const router = useRouter();
+const form = ref(null);
+const selectedSubject = ref(null);
+const selectedDate = ref(null);
+const startTime = ref(null);
+const endTime = ref(null);
+const selectedLocation = ref(null);
+const agreeTerms = ref(false);
+const email = ref('');
+const phone = ref('');
+const additionalNotes = ref('');
 
 const tutors = ref([
   {
@@ -45,17 +46,17 @@ const tutors = ref([
     image: 'https://randomuser.me/api/portraits/women/2.jpg',
     subjects: ['Software Design', 'Operating Systems', 'Computer Architecture'],
   },
-])
+]);
 
-const selectedTutor = ref(null)
-const currentStep = ref(1)
+const selectedTutor = ref(null);
+const currentStep = ref(1);
 
 const snackbar = ref({
   show: false,
   message: '',
   color: 'success',
   timeout: 3000,
-})
+});
 
 function showSnackbar(message, color = 'success', timeout = 3000) {
   snackbar.value = {
@@ -63,74 +64,101 @@ function showSnackbar(message, color = 'success', timeout = 3000) {
     message,
     color,
     timeout,
-  }
+  };
 }
 
 const availableTimes = [
   '09:00 AM',
+  '09:30 AM',
   '10:00 AM',
+  '10:30 AM',
   '11:00 AM',
+  '11:30 AM',
   '01:00 PM',
+  '01:30 PM',
   '02:00 PM',
+  '02:30 PM',
   '03:00 PM',
+  '03:30 PM',
   '04:00 PM',
-]
+  '04:30 PM',
+];
+
+function validateTimeRange() {
+  if (!startTime.value || !endTime.value) {
+    showSnackbar('Please select both start and end times', 'error');
+    return false;
+  }
+
+  const startIndex = availableTimes.indexOf(startTime.value);
+  const endIndex = availableTimes.indexOf(endTime.value);
+
+  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+    showSnackbar('End time must be later than start time', 'error');
+    return false;
+  }
+
+  return true;
+}
 
 // Validation rules
 const emailRules = [
   (v) => !!v || 'Email is required',
   (v) => /.+@.+\..+/.test(v) || 'Email must be valid',
-]
+];
 
 const phoneRules = [
   (v) => !!v || 'Phone number is required',
   (v) => /^\d{10}$/.test(v) || 'Phone must be 10 digits',
-]
+];
 
 function selectTutor(tutor) {
-  selectedTutor.value = tutor
+  selectedTutor.value = tutor;
+  console.log('Selected Tutor:', selectedTutor.value);
 }
 
 async function nextStep() {
   if (currentStep.value === 1 && !selectedTutor.value) {
-    showSnackbar('Please select a tutor', 'error')
-    return
+    showSnackbar('Please select a tutor', 'error');
+    return;
   }
-  if (currentStep.value === 2 && (!selectedDate.value || !selectedTime.value)) {
-    showSnackbar('Please select date and time', 'error')
-    return
+  if (currentStep.value === 2 && (!selectedDate.value || !validateTimeRange())) {
+    showSnackbar('Please select a date and valid time range', 'error');
+    return;
   }
   if (currentStep.value === 3) {
-    const isValid = await form.value?.validate()
-    if (!isValid) return
+    const isValid = await form.value?.validate();
+    if (!isValid) return;
   }
-  if (currentStep.value < 4) currentStep.value++
+  if (currentStep.value < 4) currentStep.value++;
 }
 
 function prevStep() {
-  if (currentStep.value > 1) currentStep.value--
+  if (currentStep.value > 1) currentStep.value--;
 }
 
+
 function resetForm() {
-  selectedTutor.value = null
-  selectedSubject.value = null
-  selectedDate.value = null
-  selectedTime.value = null
-  selectedLocation.value = null
-  agreeTerms.value = false
-  currentStep.value = 1
-  email.value = ''
-  phone.value = ''
-  additionalNotes.value = ''
+  selectedTutor.value = null;
+  selectedSubject.value = null;
+  selectedDate.value = null;
+  startTime.value = null;
+  endTime.value = null;
+  selectedLocation.value = null;
+  agreeTerms.value = false;
+  currentStep.value = 1;
+  email.value = '';
+  phone.value = '';
+  additionalNotes.value = '';
   if (form.value) {
-    form.value.reset()
+    form.value.reset();
   }
 }
 
 async function bookSession() {
   if (!selectedSubject.value || !email.value || !phone.value || !selectedTutor.value) {
-    showSnackbar('Please fill in all required fields', 'error')
-    return
+    showSnackbar('Please fill in all required fields', 'error');
+    return;
   }
 
   try {
@@ -139,22 +167,22 @@ async function bookSession() {
       tutor: selectedTutor.value.name,
       subject: selectedSubject.value,
       date: selectedDate.value,
-      time: selectedTime.value,
+      time: `${startTime.value} - ${endTime.value}`,
       location: selectedLocation.value,
       email: email.value,
       phone: phone.value,
       notes: additionalNotes.value,
-    }
+    };
 
-    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]')
-    sessions.push(newSession)
-    localStorage.setItem('sessions', JSON.stringify(sessions))
+    const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
+    sessions.push(newSession);
+    localStorage.setItem('sessions', JSON.stringify(sessions));
 
-    showSnackbar('Booking successful! Redirecting to dashboard...')
-    resetForm()
-    setTimeout(() => router.push('/dashboard'), 2000)
+    showSnackbar('Booking successful! Redirecting to dashboard...');
+    resetForm();
+    setTimeout(() => router.push('/dashboard'), 2000);
   } catch {
-    showSnackbar('Failed to book session. Please try again.', 'error')
+    showSnackbar('Failed to book session. Please try again.', 'error');
   }
 }
 </script>
@@ -242,13 +270,22 @@ async function bookSession() {
                       <DateSelector
                         :selected-subject="selectedSubject"
                         :selected-date="selectedDate"
-                        :selected-time="selectedTime"
+                        :start-time="startTime"
+                        :end-time="endTime"
                         :selected-location="selectedLocation"
+                       @update:selected-date="(date) => (selectedDate.value = date)"
                       />
                       <v-select
-                        v-model="selectedTime"
+                        v-model="startTime"
                         :items="availableTimes"
-                        label="Choose Time"
+                        label="Start Time"
+                        class="mt-4"
+                        color="amber-darken-2"
+                      />
+                      <v-select
+                        v-model="endTime"
+                        :items="availableTimes"
+                        label="End Time"
                         class="mt-4"
                         color="amber-darken-2"
                       />
@@ -289,7 +326,7 @@ async function bookSession() {
                       <BookingConfirmation
                         :selected-subject="selectedSubject"
                         :selected-date="selectedDate"
-                        :selected-time="selectedTime"
+                        :selected-time="'${startTime.value} - ${endTime.value}'"
                         :selected-location="selectedLocation"
                         :agree-terms="agreeTerms"
                         @update-terms="updateTerms"
@@ -433,3 +470,4 @@ async function bookSession() {
   color: #2c3e50 !important;
 }
 </style>
+

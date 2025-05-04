@@ -1,7 +1,7 @@
 <script>
 export default {
   props: {
-    selectedDate: String,
+    selectedDate: String, // The currently selected date passed from the parent
   },
   data() {
     return {
@@ -12,16 +12,17 @@ export default {
         { id: 4, date: 'May 13, 2025', isAvailable: true, location: 'Hiraiya Room 101' },
         { id: 5, date: 'May 15, 2025', isAvailable: true, location: 'CSU-Library Study Room' },
       ],
-    }
+    };
   },
   methods: {
     selectDate(date) {
       if (date.isAvailable) {
-        this.$emit('update-date', date)
+        console.log('Emitting selected date:', date.date); // Debugging log
+        this.$emit('update:selected-date', date.date); // Emit the selected date to the parent
       }
     },
   },
-}
+};
 </script>
 
 <template>
@@ -95,3 +96,4 @@ export default {
   padding-top: 12px !important;
 }
 </style>
+
