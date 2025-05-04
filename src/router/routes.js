@@ -1,8 +1,6 @@
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
-import TutorRegisterView from '@/views/auth/TutorRegisterView.vue'
-import TutorDashboardView from '@/views/system/TutorDashboardView.vue'
 
 // System Views
 import DashboardView from '@/views/system/DashboardView.vue'
@@ -30,23 +28,6 @@ export const routes = [
       public: true,
       authRedirect: '/dashboard',
     },
-  },
-
-  {
-    path: '/tutor-register',
-    name: 'tutor-register',
-    component: TutorRegisterView,
-    meta: {
-      public: true,
-      authRedirect: '/dashboard',
-    },
-  },
-
-  {
-    path: '/tutor/dashboard',
-    name: 'tutor-dashboard',
-    component: TutorDashboardView,
-    meta: { requiresAuth: true, role: 'Tutor' },
   },
 
   {

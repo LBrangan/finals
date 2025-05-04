@@ -13,8 +13,10 @@ const authStore = useAuthUserStore()
 const isLoggedIn = ref(false)
 const isMobileLogged = ref(false)
 const isDesktop = ref(false)
+const loading = ref(true) // 👈 Add loading state
 
 const checkAuth = async () => {
+  loading.value = true
   const authenticated = await authStore.isAuthenticated()
   isLoggedIn.value = authenticated
   isMobileLogged.value = mobile.value && authenticated
@@ -24,6 +26,8 @@ const checkAuth = async () => {
   if (authenticated && ['/', '/register', '/tutor-register'].includes(route.path)) {
     router.replace('/dashboard')
   }
+
+  loading.value = false
 }
 
 // Watch for route changes
@@ -37,7 +41,8 @@ onMounted(async () => {
 <template>
   <v-responsive>
     <v-app>
-      <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
+      <!-- Avoid rendering nav while loading -->
+      <TopProfileNavigation v-if="!loading && isLoggedIn" />
 
       <v-main :class="{ 'with-drawer': isLoggedIn }">
         <v-container fluid class="bg-amber-lighten-2 fill-height">
