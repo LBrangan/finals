@@ -1,14 +1,11 @@
 <script setup>
 import WelcomeWidget from '@/components/system/dashboard/WelcomeWidget.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import { useAuthUserStore } from '@/stores/authUser'
+
 import { useDisplay } from 'vuetify'
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 // Use Pinia Store and Router
-const authStore = useAuthUserStore()
-const router = useRouter()
 
 // Utilize pre-defined vue functions
 const { mobile } = useDisplay()
@@ -18,11 +15,6 @@ const isDrawerVisible = ref(!mobile.value)
 const theme = ref(localStorage.getItem('theme') ?? 'light')
 
 // Check user role and redirect if necessary
-onMounted(() => {
-  if (authStore.userRole === 'Tutor') {
-    router.replace('/tutor/dashboard')
-  }
-})
 
 // Toggle drawer
 const toggleDrawer = () => {
