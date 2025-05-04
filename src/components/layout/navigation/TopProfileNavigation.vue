@@ -33,7 +33,10 @@ const { xs, sm, mdAndUp } = useDisplay()
 const tab = ref(null)
 
 // Show/hide navigation based on screen size
-const showNavigation = computed(() => mdAndUp.value)
+const showNavigation = computed(() => {
+  return mdAndUp.value
+})
+
 const isCompact = computed(() => xs.value || sm.value)
 
 // Mobile menu control
@@ -44,16 +47,15 @@ const mobileDrawer = ref(false)
 const navigationItems = computed(() => {
   if (authStore.userRole === 'Tutor') {
     return [
-      { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
+      { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/tutor/dashboard' },
       { title: 'My Sessions', icon: 'mdi-calendar-clock', to: '/sessions' },
-      { title: 'Account Settings', icon: 'mdi-cog', to: '/account/settings' },
     ]
   }
+  // Tutee or Default
   return [
     { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
     { title: 'Browse Tutors', icon: 'mdi-account-search', to: '/profiles' },
     { title: 'Book Session', icon: 'mdi-book-open-page-variant', to: '/bookings' },
-    { title: 'My Sessions', icon: 'mdi-calendar-clock', to: '/sessions' },
   ]
 })
 
@@ -219,11 +221,6 @@ const drawerItems = computed(() => [
   background-color: #e91313;
   color: #f4f5ee;
   transform: translateY(-2px);
-}
-
-.user-avatar {
-  background-color: #e91313;
-  color: #f4f5ee;
 }
 
 .user-avatar span {

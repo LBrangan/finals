@@ -11,8 +11,8 @@ export const useAuthUserStore = defineStore('authUser', () => {
   // Getters
   // Computed Properties; Use for getting the state but not modifying its reactive state
   const userRole = computed(() => {
-    if (!userData.value) return null
-    return userData.value.role === 'tutor' ? 'Tutor' : 'Tutee'
+    const role = userData.value?.role?.trim().toLowerCase()
+    return role === 'tutor' ? 'Tutor' : 'Tutee'
   })
 
   // Reset State Action
@@ -28,8 +28,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
     const { data } = await supabase.auth.getSession()
 
     if (data.session) {
-      const { id, email, user_metadata } = data.session.user
-      userData.value = { id, email, ...user_metadata }
+      await getUserInformation()
     }
 
     return !!data.session

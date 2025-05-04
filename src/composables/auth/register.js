@@ -13,7 +13,6 @@ export function useRegister() {
     email: '',
     password: '',
     password_confirmation: '',
-    role: 'Tutee',
   }
   const formData = ref({
     ...formDataDefault,
@@ -25,6 +24,7 @@ export function useRegister() {
 
   // Register Functionality
   const onSubmit = async () => {
+    // Reset Form Action utils
     formAction.value = { ...formActionDefault, formProcess: true }
 
     const { data, error } = await supabase.auth.signUp({
@@ -34,36 +34,26 @@ export function useRegister() {
         data: {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
-          role: formData.value.role,
+
+          role: 'Tutee', // If role based; just change the string based on role
         },
       },
     })
 
     if (error) {
+      // Add Error Message and Status Code
       formAction.value.formErrorMessage = error.message
       formAction.value.formStatus = error.status
     } else if (data) {
-      const { error: profileError } = await supabase.from('profiles').insert([
-        {
-          id: data.user.id, // Changed from user_id to id
-          firstname: formData.value.firstname,
-          lastname: formData.value.lastname,
-          email: formData.value.email,
-          role: formData.value.role,
-          created_at: new Date(),
-        },
-      ])
-
-      if (profileError) {
-        formAction.value.formErrorMessage = profileError.message
-        return
-      }
-
+      // Add Success Message
       formAction.value.formSuccessMessage = 'Successfully Registered Account.'
+      // Redirect Acct to Dashboard
       router.replace('/dashboard')
     }
 
+    // Reset Form
     refVForm.value?.reset()
+    // Turn off processing
     formAction.value.formProcess = false
   }
 

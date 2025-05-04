@@ -76,7 +76,7 @@ const onFormSubmit = () => {
         <v-img
           width="55%"
           class="mx-auto rounded-circle"
-          color="red-darken-4"
+          color="green-darken-4"
           aspect-ratio="1"
           :src="imgPreview"
           alt="Profile Picture Preview"

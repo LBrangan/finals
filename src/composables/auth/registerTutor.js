@@ -32,7 +32,7 @@ export function useRegisterTutor() {
         data: {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
-          role: formData.value.role || 'Tutor',
+          role: formData.value.role,
         },
       },
     })
@@ -51,6 +51,7 @@ export function useRegisterTutor() {
           created_at: new Date(),
         },
       ])
+
       if (profileError) {
         formAction.value.formErrorMessage = profileError.message
         return
@@ -59,6 +60,8 @@ export function useRegisterTutor() {
       formAction.value.formSuccessMessage = 'Tutor registration successful!'
       router.replace('tutor/dashboard')
     }
+
+    //reset form
     refVForm.value?.reset()
     formAction.value.formProcess = false
   }
