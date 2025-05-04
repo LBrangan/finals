@@ -1,64 +1,74 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
+import { computed } from 'vue'
 
-const router = useRouter()
-const isMobile = ref(window.innerWidth < 960)
-const updateMobile = () => {
-  isMobile.value = window.innerWidth < 960
-}
+const { mobile, width } = useDisplay()
+const isCompact = computed(() => mobile.value || width.value < 960)
 
-const navigateToTutorRegister = () => {
-  router.push('/tutor-register')
-}
-
-onMounted(() => {
-  window.addEventListener('resize', updateMobile)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateMobile)
-})
+const cardStyles = computed(() => ({
+  'pa-8': !isCompact.value,
+  'pa-4': isCompact.value,
+  'max-width': isCompact.value ? '100%' : '1000px', // Increased max-width
+}))
 </script>
 
 <template>
   <AppLayout>
     <template #content>
       <v-container fluid class="register-container">
-        <v-row align="center" justify="center" class="fill-height">
-          <v-col :cols="isMobile ? 12 : 11" :sm="isMobile ? 12 : 11" :md="10" :lg="9">
+        <v-row no-gutters align="center" justify="center" class="fill-height">
+          <v-card class="registration-card" elevation="8" v-bind="cardStyles">
+            <!-- Left Section with Image and Text -->
             <v-row>
-              <!-- Left Section with Image and Text -->
-              <v-col
-                cols="12"
-                md="6"
-                :class="{ 'd-none': isMobile, 'd-md-flex': !isMobile }"
-                class="left-section align-center justify-center pa-8"
-              >
-                <div class="text-center">
-                  <img src="/images/learnmate-logo.png" alt="Logo" class="responsive-img mb-8" />
-                  <div class="welcome-text">
-                    <h1 class="text-h4 font-weight-bold mb-4">Welcome to LearnMate!</h1>
-                    <p class="text-body-1 mb-6">Find your perfect study companion!</p>
-                    <v-btn
-                      color="#F57C51"
-                      size="large"
-                      class="tutor-btn"
-                      prepend-icon="mdi-school"
-                      @click="navigateToTutorRegister"
+              <v-col v-if="!isCompact" cols="12" md="5" class="left-section pa-8">
+                <div class="image-container py-10 mx-auto">
+                  <v-img
+                    src="/images/tutor-illustration.jpg"
+                    alt="Become a Tutee"
+                    class="rounded-lg"
+                    cover
+                  />
+                </div>
+                <div class="benefits-section">
+                  <h3 class="text-h6 font-weight-bold mb-4">Why Join as a Student?</h3>
+                  <v-list class="benefits-list">
+                    <v-list-item
+                      v-for="(benefit, index) in [
+                        'Flexible learning schedule',
+                        'Access to a variety of subjects',
+                        'Personalized learning experience',
+                        'Connect with motivated students',
+                      ]"
+                      :key="index"
+                      class="benefit-item"
                     >
-                      Want to become a Tutor?
-                    </v-btn>
-                  </div>
+                      <template v-slot:prepend>
+                        <v-icon color="amber-darken-2" class="mr-2">mdi-check-circle</v-icon>
+                      </template>
+                      {{ benefit }}
+                    </v-list-item>
+                  </v-list>
                 </div>
               </v-col>
 
-              <!-- Form Section -->
-              <RegisterForm :isMobile="isMobile"></RegisterForm>
+              <!-- Right Section with Form -->
+              <v-col cols="12" :md="isCompact ? 12 : 7" class="right-section">
+                <div class="form-container pa-6 mt-10">
+                  <div class="text-center mb-8">
+                    <h1 :class="isCompact ? 'text-h5' : 'text-h4'" class="font-weight-bold mb-2">
+                      Become a Tutee
+                    </h1>
+                    <p class="text-body-1 text-grey-darken-1">
+                      Join our community of students and start learning today!
+                    </p>
+                  </div>
+                  <RegisterForm :is-mobile="isCompact" />
+                </div>
+              </v-col>
             </v-row>
-          </v-col>
+          </v-card>
         </v-row>
       </v-container>
     </template>
@@ -67,60 +77,65 @@ onUnmounted(() => {
 
 <style scoped>
 .register-container {
-  background: linear-gradient(135deg, #ffd54f 0%, #ffecb3 100%);
+  background: linear-gradient(135deg, #ffd54f20 0%, #ffecb320 100%);
   min-height: 100vh;
-  display: flex;
-  align-items: center;
+  padding: 24px;
+}
+
+.registration-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
 .left-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
+  background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
+  border-right: 1px solid #eee;
 }
 
-.welcome-text {
-  text-align: center;
-  color: #2c3e50;
+.image-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.v-col {
+.benefits-section {
+  padding: 20px 0;
+}
+
+.benefits-list {
+  background: transparent !important;
+}
+
+.benefit-item {
+  padding: 12px 0;
+  min-height: 44px;
   transition: all 0.3s ease;
 }
 
-.responsive-img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(245, 124, 81, 0.2);
-  transition: transform 0.3s ease;
-  opacity: 0.9;
+.benefit-item:hover {
+  background: #fff8e140;
+  transform: translateX(4px);
 }
 
-.responsive-img:hover {
-  transform: translateY(-5px);
-}
-
-.tutor-btn {
-  height: 48px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: #f6f8e2 !important;
-  transition: all 0.3s ease;
-  text-transform: none;
-}
-
-.tutor-btn:hover {
-  background-color: #fcbc58 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 124, 81, 0.3);
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 @media (max-width: 960px) {
-  .register-container {
-    padding: 1rem;
+  .tutor-container {
+    padding: 16px;
+  }
+
+  .registration-card {
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .form-container {
+    padding: 16px !important;
   }
 }
 </style>
