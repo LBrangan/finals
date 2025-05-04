@@ -12,9 +12,9 @@ export function useRegisterTutor() {
     lastname: '',
     subjects: [], // Array of subject IDs
     bio: '',
-    education: '',
-    hourlyRate: '',
-    availability: [], // Array of available time slots
+    program: '',
+    availability: [], // Array of available time slot
+    role: 'Tutor',
   }
 
   const formData = ref({ ...formDataDefault })
@@ -24,38 +24,43 @@ export function useRegisterTutor() {
   const onSubmit = async () => {
     formAction.value = { ...formActionDefault, formProcess: true }
 
-    try {
-      // 1. Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.value.email,
-        password: formData.value.password,
-      })
+    // 1. Create auth user
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.value.email,
+      password: formData.value.password,
+      options: {
+        data: {
+          firstname: formData.value.firstname,
+          lastname: formData.value.lastname,
+          role: formData.value.role || 'Tutor',
+        },
+      },
+    })
 
-      if (authError) throw authError
-
-      // 2. Create profile record
-      const { error: profileError } = await supabase.from('profiles').insert({
-        auth_users_id: authData.user.id,
-        firstname: formData.value.firstname,
-        lastname: formData.value.lastname,
-        email: formData.value.email,
-        role: 'Tutor',
-        bio: formData.value.bio,
-        education: formData.value.education,
-        hourly_rate: formData.value.hourlyRate,
-      })
-
-      if (profileError) throw profileError
-
-      formAction.value.formSuccessMessage = 'Tutor registration successful!'
-      router.replace('/dashboard')
-    } catch (error) {
+    if (error) {
       formAction.value.formErrorMessage = error.message
       formAction.value.formStatus = error.status
-    } finally {
-      refVForm.value?.reset()
-      formAction.value.formProcess = false
+    } else if (data) {
+      const { error: profileError } = await supabase.from('profiles').insert([
+        {
+          id: data.user.id, // Changed from user_id to id
+          firstname: formData.value.firstname,
+          lastname: formData.value.lastname,
+          email: formData.value.email,
+          role: 'Tutor',
+          created_at: new Date(),
+        },
+      ])
+      if (profileError) {
+        formAction.value.formErrorMessage = profileError.message
+        return
+      }
+
+      formAction.value.formSuccessMessage = 'Tutor registration successful!'
+      router.replace('tutor/dashboard')
     }
+    refVForm.value?.reset()
+    formAction.value.formProcess = false
   }
 
   const onFormSubmit = () => {

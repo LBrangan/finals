@@ -1,9 +1,15 @@
 <script setup>
+import { emailValidator, requiredValidator, passwordValidator } from '@/utils/validators'
+import { ref } from 'vue'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 import { useRegisterTutor } from '@/composables/auth/registerTutor'
-import { emailValidator, requiredValidator } from '@/utils/validators'
-import { ref } from 'vue'
 
+defineProps({
+  isMobile: {
+    type: Boolean,
+    default: false,
+  },
+})
 const { formData, formAction, refVForm, onFormSubmit } = useRegisterTutor()
 const isPasswordVisible = ref(false)
 </script>

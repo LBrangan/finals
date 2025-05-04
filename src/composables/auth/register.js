@@ -13,7 +13,7 @@ export function useRegister() {
     email: '',
     password: '',
     password_confirmation: '',
-    role: '',
+    role: 'Tutee',
   }
   const formData = ref({
     ...formDataDefault,
