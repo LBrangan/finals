@@ -1,45 +1,45 @@
 <script setup>
-import { useSession } from '@/composables/useSession'
+import { ref, watch, defineProps, defineEmits } from 'vue'
 
+// Define props
 const props = defineProps({
   selectedSubject: String,
   selectedDate: String,
   selectedTime: String,
   selectedLocation: String,
   agreeTerms: Boolean,
-  tutorId: String,
 })
 
-const emit = defineEmits(['confirm-booking', 'booking-error'])
-const { createSession } = useSession()
+// Define emits
+const emit = defineEmits(['confirm-booking', 'update-terms'])
 
-const confirmBooking = async () => {
-  try {
-    await createSession({
-      tutorId: props.tutorId,
-      subjectId: props.selectedSubject,
-      date: props.selectedDate,
-      time: props.selectedTime,
-    })
-    emit('confirm-booking')
-  } catch (error) {
-    emit('booking-error', error)
-  }
+// Local reactive state for terms agreement
+const localAgreeTerms = ref(props.agreeTerms)
+
+// Watch for changes in terms agreement
+watch(localAgreeTerms, (newValue) => {
+  emit('update-terms', newValue)
+})
+
+// Method to confirm the booking
+const confirmBooking = () => {
+  emit('confirm-booking')
 }
 </script>
 
 <template>
   <h3>Confirm Your Booking</h3>
   <p>
-    <strong>Subject:</strong> {{ selectedSubject }} <br />
-    <strong>Date:</strong> {{ selectedDate }} <br />
-    <strong>Time:</strong> {{ selectedTime }} <br />
-    <strong>Location:</strong> {{ selectedLocation }}
+    <strong>Subject:</strong> {{ props.selectedSubject }} <br />
+    <strong>Date:</strong> {{ props.selectedDate }} <br />
+    <strong>Time:</strong> {{ props.selectedTime }} <br />
+    <strong>Location:</strong> {{ props.selectedLocation }}
   </p>
   <v-checkbox
     v-model="localAgreeTerms"
     label="I agree to the session terms and conditions"
-    @change="updateTerms"
   ></v-checkbox>
-  <v-btn color="success" @click="confirmBooking" :disabled="!agreeTerms"> Confirm Booking </v-btn>
+  <v-btn color="success" @click="confirmBooking" :disabled="!localAgreeTerms">
+    Confirm Booking
+  </v-btn>
 </template>

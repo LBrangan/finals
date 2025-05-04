@@ -1,28 +1,26 @@
-<script>
-export default {
-  props: {
-    selectedDate: String, // The currently selected date passed from the parent
-  },
-  data() {
-    return {
-      availableDates: [
-        { id: 1, date: 'May 5, 2025', isAvailable: true, location: 'Hiraiya Room 101' },
-        { id: 2, date: 'May 7, 2025', isAvailable: true, location: 'Hiraiya CL 5' },
-        { id: 3, date: 'May 9, 2025', isAvailable: true, location: 'CSU-Library Study Room' },
-        { id: 4, date: 'May 13, 2025', isAvailable: true, location: 'Hiraiya Room 101' },
-        { id: 5, date: 'May 15, 2025', isAvailable: true, location: 'CSU-Library Study Room' },
-      ],
-    };
-  },
-  methods: {
-    selectDate(date) {
-      if (date.isAvailable) {
-        console.log('Emitting selected date:', date.date); // Debugging log
-        this.$emit('update:selected-date', date.date); // Emit the selected date to the parent
-      }
-    },
-  },
-};
+<script setup>
+import { ref, defineProps, defineEmits } from 'vue'
+
+// Define the props
+const emit = defineEmits(['update-date']) // or whatever your events are
+const props = defineProps({
+  selectedDate: String,
+})
+// Local state for available dates
+const availableDates = ref([
+  { id: 1, date: 'May 5, 2025', isAvailable: true, location: 'Hiraiya Room 101' },
+  { id: 2, date: 'May 7, 2025', isAvailable: true, location: 'Hiraiya CL 5' },
+  { id: 3, date: 'May 9, 2025', isAvailable: true, location: 'CSU-Library Study Room' },
+  { id: 4, date: 'May 13, 2025', isAvailable: true, location: 'Hiraiya Room 101' },
+  { id: 5, date: 'May 15, 2025', isAvailable: true, location: 'CSU-Library Study Room' },
+])
+
+// Method to handle date selection
+const selectDate = (date) => {
+  if (date.isAvailable) {
+    emit('update-date', date)
+  }
+}
 </script>
 
 <template>
@@ -31,7 +29,7 @@ export default {
     <v-col v-for="date in availableDates" :key="date.id" cols="12" md="6" lg="4">
       <v-card
         elevation="4"
-        :class="['date-card', { 'date-card-selected': date.date === selectedDate }]"
+        :class="['date-card', { 'date-card-selected': date.date === props.selectedDate }]"
         @click="selectDate(date)"
       >
         <v-card-title class="d-flex align-center">
@@ -96,4 +94,3 @@ export default {
   padding-top: 12px !important;
 }
 </style>
-

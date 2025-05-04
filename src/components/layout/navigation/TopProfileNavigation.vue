@@ -54,7 +54,7 @@ const navigationItems = computed(() => {
   // Tutee or Default
   return [
     { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
-    { title: 'Browse Tutors', icon: 'mdi-account-search', to: '/profiles' },
+    { title: 'Browse Tutors', icon: 'mdi-account-search', to: '/tutors' },
     { title: 'Book Session', icon: 'mdi-book-open-page-variant', to: '/bookings' },
   ]
 })
