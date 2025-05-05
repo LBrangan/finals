@@ -1,31 +1,48 @@
 <script setup>
 import TopProfileNavigation from '@/components/layout/navigation/TopProfileNavigation.vue'
 import { useAuthUserStore } from '@/stores/authUser'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useRouter, useRoute } from 'vue-router'
 
-// Utilize pre-defined vue functions
+const router = useRouter()
+const route = useRoute()
 const { mobile } = useDisplay()
-
-// Use Pinia Store
 const authStore = useAuthUserStore()
 
-// Load Variables
 const isLoggedIn = ref(false)
 const isMobileLogged = ref(false)
 const isDesktop = ref(false)
+const loading = ref(true) // 👈 Add loading state
+
+const checkAuth = async () => {
+  loading.value = true
+  const authenticated = await authStore.isAuthenticated()
+  isLoggedIn.value = authenticated
+  isMobileLogged.value = mobile.value && authenticated
+  isDesktop.value = !mobile.value && (authenticated || !authenticated)
+
+  // If user is authenticated and tries to access auth pages, redirect to dashboard
+  if (authenticated && ['/', '/register', '/tutor-register'].includes(route.path)) {
+    router.replace('/dashboard')
+  }
+
+  loading.value = false
+}
+
+// Watch for route changes
+watch(() => route.path, checkAuth)
 
 onMounted(async () => {
-  isLoggedIn.value = await authStore.isAuthenticated()
-  isMobileLogged.value = mobile.value && isLoggedIn.value
-  isDesktop.value = !mobile.value && (isLoggedIn.value || !isLoggedIn.value)
+  await checkAuth()
 })
 </script>
 
 <template>
   <v-responsive>
-    <v-app class="bg-amber-lighten-2">
-      <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
+    <v-app>
+      <!-- Avoid rendering nav while loading -->
+      <TopProfileNavigation v-if="!loading && isLoggedIn" />
 
       <v-main :class="{ 'with-drawer': isLoggedIn }">
         <v-container fluid class="bg-amber-lighten-2 fill-height">

@@ -11,8 +11,8 @@ export const useAuthUserStore = defineStore('authUser', () => {
   // Getters
   // Computed Properties; Use for getting the state but not modifying its reactive state
   const userRole = computed(() => {
-    if (!userData.value) return null
-    return userData.value.role === 'tutor' ? 'Tutor' : 'Tutee'
+    const role = userData.value?.role?.trim().toLowerCase()
+    return role === 'tutor' ? 'Tutor' : 'Tutee'
   })
 
   // Reset State Action
@@ -28,8 +28,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
     const { data } = await supabase.auth.getSession()
 
     if (data.session) {
-      const { id, email, user_metadata } = data.session.user
-      userData.value = { id, email, ...user_metadata }
+      await getUserInformation()
     }
 
     return !!data.session
@@ -102,7 +101,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
 
     // Upload the file with the user ID and file extension
     const { data, error } = await supabase.storage
-      .from('LearnMate')
+      .from('learnmate')
       .upload('avatars/' + userData.value.id + '-avatar.png', file, {
         cacheControl: '3600',
         upsert: true,
@@ -115,7 +114,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
     // If no error set data to userData state with the image_url
     else if (data) {
       // Retrieve Image Public Url
-      const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
+      const { data: imageData } = supabase.storage.from('learnmate').getPublicUrl(data.path)
 
       // Update the user information with the new image_url
       return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })

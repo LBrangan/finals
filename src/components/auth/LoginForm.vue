@@ -17,21 +17,17 @@ const isPasswordVisible = ref(false)
   ></AlertNotification>
 
   <v-form ref="refVForm" @submit.prevent="onFormSubmit" class="auth-form">
-    <v-row dense>
-      <v-col cols="12">
-        <v-text-field
-          v-model="formData.email"
-          label="Email address"
-          variant="outlined"
-          class="mb-3"
-          type="email"
-          prepend-inner-icon="mdi-email"
-          :rules="[requiredValidator, emailValidator]"
-          :disabled="formAction.formProcess"
-          hide-details="auto"
-        ></v-text-field>
-      </v-col>
-    </v-row>
+    <v-text-field
+      v-model="formData.email"
+      label="Email address"
+      variant="outlined"
+      class="mb-3"
+      type="email"
+      prepend-inner-icon="mdi-email"
+      :rules="[requiredValidator, emailValidator]"
+      :disabled="formAction.formProcess"
+      hide-details="auto"
+    ></v-text-field>
 
     <!-- Password Field -->
     <v-text-field

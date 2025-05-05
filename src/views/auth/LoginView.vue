@@ -1,36 +1,16 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { ref } from 'vue'
 
-const router = useRouter()
 const isMobile = ref(window.innerWidth < 960)
-const isFormValid = ref(false)
-
-const updateMobile = () => {
-  isMobile.value = window.innerWidth < 960
-}
-
-const handleSubmit = () => {
-  // Add login logic here
-  router.push('/dashboard')
-}
-
-onMounted(() => {
-  window.addEventListener('resize', updateMobile)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateMobile)
-})
 </script>
 
 <template>
   <AppLayout>
     <template #content>
-      <v-container fluid class="login-container">
-        <v-row justify="center" align="center" class="fill-height">
+      <v-container class="fill-height" fluid>
+        <v-row>
           <!-- Left Column - Image -->
           <v-col
             :cols="isMobile ? 12 : 8"
@@ -48,7 +28,7 @@ onUnmounted(() => {
             :class="isMobile ? 'px-4' : ''"
             :p="isMobile ? 3 : 5"
           >
-            <v-card class="pa-6 auth-card" elevation="2" rounded="lg">
+            <v-card class="pa-6" elevation="2" rounded="lg">
               <v-row justify="center">
                 <v-col cols="12" class="text-center">
                   <h1 class="mt-2 font-weight-bold">Welcome Back</h1>
@@ -56,21 +36,14 @@ onUnmounted(() => {
                 </v-col>
               </v-row>
 
-              <LoginForm @submit="handleSubmit" v-model:valid="isFormValid"></LoginForm>
+              <LoginForm></LoginForm>
 
               <!-- Sign Up Link -->
-              <v-col class="text-center">
+              <v-col class="text-center mt-2 fw-bold">
                 Don't have an account?
                 <RouterLink to="/register" class="signup-link">Sign Up</RouterLink>
               </v-col>
             </v-card>
-
-            <!-- Forgot Password Link -->
-            <v-col class="text-center">
-              <a href="#" class="text-decoration-none font-weight-bold" style="color: black">
-                Forgot Password?
-              </a>
-            </v-col>
           </v-col>
         </v-row>
       </v-container>

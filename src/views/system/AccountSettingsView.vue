@@ -23,10 +23,6 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     :is-with-app-bar-nav-icon="true"
     @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
   >
-    <template #navigation>
-      <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
-    </template>
-
     <template #content>
       <v-container>
         <v-card class="mb-5">
