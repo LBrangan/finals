@@ -1,124 +1,223 @@
-<script>
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useToast } from 'vue-toastification'
 import SessionsReschedule from './SessionsReschedule.vue'
-import SessionCancel from './SessionCancel.vue'
 
-export default {
-  components: {
-    SessionsReschedule,
-    SessionCancel,
-  },
-  data() {
-    return {
-      tab: null,
-      sessions: JSON.parse(localStorage.getItem('sessions') || '[]'),
-      showReschedule: false,
-      selectedSession: null,
-      showCancel: false,
-      sessionToCancel: null,
-    }
-  },
-  mounted() {
-    window.addEventListener('storage', this.handleStorageChange)
-  },
-  beforeUnmount() {
-    window.removeEventListener('storage', this.handleStorageChange)
-  },
-  computed: {
-    upcomingSessions() {
-      const now = new Date()
-      return this.sessions.filter((session) => new Date(session.date) >= now)
-    },
-    pastSessions() {
-      const now = new Date()
-      return this.sessions.filter((session) => new Date(session.date) < now)
-    },
-  },
-  methods: {
-    formatDate(date) {
-      return new Date(date).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    },
-    handleStorageChange(e) {
-      if (e.key === 'sessions') {
-        this.sessions = JSON.parse(e.newValue || '[]')
-      }
-    },
-    openReschedule(session) {
-      this.selectedSession = session
-      this.showReschedule = true
-    },
-    handleReschedule(updatedSession) {
-      const toast = useToast()
-      const index = this.sessions.findIndex((s) => s.id === updatedSession.id)
-      if (index !== -1) {
-        this.sessions[index] = updatedSession
-        localStorage.setItem('sessions', JSON.stringify(this.sessions))
-        this.showReschedule = false
-        toast.success('Session rescheduled successfully!')
-      }
-    },
-    async cancelSession(sessionId) {
-      const toast = useToast()
+import { useRouter } from 'vue-router'
 
-      const toastId = toast.info('Are you sure you want to cancel this session?', {
-        timeout: false,
-        closeOnClick: false,
-        closeButton: false,
-        position: 'top-center',
-        containerClassName: 'cancel-session-toast',
-        component: {
-          template: `
-            <div class="d-flex justify-space-between align-center pa-2">
-              <span>Are you sure you want to cancel this session?</span>
-              <div class="ml-4">
-                <v-btn color="error" size="small" class="mr-2" @click="confirmCancel">Yes</v-btn>
-                <v-btn color="primary" size="small" @click="cancelAction">No</v-btn>
-              </div>
-            </div>
-          `,
-          methods: {
-            confirmCancel() {
-              this.$emit('action')
-            },
-            cancelAction() {
-              this.$emit('cancel')
-            },
-          },
+const router = useRouter()
+
+const goToDashboard = () => {
+  router.push('/dashboard') // make sure this route exists in your app
+}
+
+const toast = useToast()
+
+const tab = ref(null)
+const showReschedule = ref(false)
+const selectedSession = ref(null)
+
+const sessions = ref(JSON.parse(localStorage.getItem('sessions') || '[]'))
+
+const upcomingSessions = computed(() => {
+  const now = new Date()
+  return sessions.value.filter((s) => new Date(s.date) >= now)
+})
+
+const pastSessions = computed(() => {
+  const now = new Date()
+  return sessions.value.filter((s) => new Date(s.date) < now)
+})
+
+const formatDate = (date) =>
+  new Date(date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
+const handleStorageChange = (e) => {
+  if (e.key === 'sessions') {
+    sessions.value = JSON.parse(e.newValue || '[]')
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('storage', handleStorageChange)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', handleStorageChange)
+})
+
+const openReschedule = (session) => {
+  selectedSession.value = session
+  showReschedule.value = true
+}
+
+const handleReschedule = (updatedSession) => {
+  const index = sessions.value.findIndex((s) => s.id === updatedSession.id)
+  if (index !== -1) {
+    sessions.value[index] = updatedSession
+    localStorage.setItem('sessions', JSON.stringify(sessions.value))
+    showReschedule.value = false
+    toast.success('Session rescheduled successfully!')
+  }
+}
+
+const cancelSession = (sessionId) => {
+  const toastId = toast.info('Are you sure you want to cancel this session?', {
+    timeout: false,
+    closeOnClick: false,
+    closeButton: false,
+    position: 'top-center',
+    containerClassName: 'cancel-session-toast',
+    component: {
+      template: `
+        <div class="d-flex justify-space-between align-center pa-2">
+          <span>Are you sure you want to cancel this session?</span>
+          <div class="ml-4">
+            <v-btn color="error" size="small" class="mr-2" @click="confirmCancel">Yes</v-btn>
+            <v-btn color="primary" size="small" @click="cancelAction">No</v-btn>
+          </div>
+        </div>
+      `,
+      methods: {
+        confirmCancel() {
+          this.$emit('action')
         },
-        action: {
-          onClick: () => {
-            this.sessions = this.sessions.filter((s) => s.id !== sessionId)
-            localStorage.setItem('sessions', JSON.stringify(this.sessions))
-            toast.dismiss(toastId)
-            toast.success('Session cancelled successfully!')
-          },
+        cancelAction() {
+          this.$emit('cancel')
         },
-        cancel: {
-          onClick: () => {
-            toast.dismiss(toastId)
-          },
-        },
-      })
+      },
     },
-    openCancelDialog(sessionId) {
-      this.sessionToCancel = sessionId
-      this.showCancel = true
+    action: {
+      onClick: () => {
+        sessions.value = sessions.value.filter((s) => s.id !== sessionId)
+        localStorage.setItem('sessions', JSON.stringify(sessions.value))
+        toast.dismiss(toastId)
+        toast.success('Session cancelled successfully!')
+      },
     },
-    handleCancelSession(sessionId) {
-      this.sessions = this.sessions.filter((s) => s.id !== sessionId)
-      localStorage.setItem('sessions', JSON.stringify(this.sessions))
-      this.showCancel = false
+    cancel: {
+      onClick: () => {
+        toast.dismiss(toastId)
+      },
     },
-  },
+  })
 }
 </script>
 
 <template>
+  <v-responsive>
+    <v-app>
+      <v-container fluid class="pa-6 sessions-background">
+        <v-card class="mx-auto session-card-container" max-width="1200">
+          <v-card-actions class="d-flex justify-start px-6 pt-6">
+            <v-btn color="primary" variant="text" @click="goToDashboard">
+              <v-icon left>mdi-arrow-left</v-icon>
+              Back to Dashboard
+            </v-btn>
+          </v-card-actions>
+          <v-card-title class="text-h4 font-weight-bold text-center py-6">
+            My Sessions
+            <div class="text-subtitle-1 mt-2 text-grey">Manage your tutoring sessions</div>
+          </v-card-title>
+
+          <v-tabs v-model="tab" centered color="amber-darken-2">
+            <v-tab value="upcoming" class="text-subtitle-1">Upcoming Sessions</v-tab>
+            <v-tab value="past" class="text-subtitle-1">Past Sessions</v-tab>
+          </v-tabs>
+
+          <v-window v-model="tab">
+            <!-- Upcoming Sessions -->
+            <v-window-item value="upcoming">
+              <v-container v-if="upcomingSessions.length > 0">
+                <v-row>
+                  <v-col v-for="session in upcomingSessions" :key="session.id" cols="12" md="6">
+                    <v-card class="ma-2 session-card" elevation="2">
+                      <v-card-title class="text-h6 amber lighten-4 py-3">
+                        {{ session.subject }}
+                      </v-card-title>
+                      <v-card-text class="pt-4">
+                        <v-row no-gutters>
+                          <v-col cols="12">
+                            <div class="d-flex align-center mb-2">
+                              <v-icon color="amber-darken-2" class="mr-2">mdi-calendar</v-icon>
+                              <strong>Date:</strong>&nbsp;{{ formatDate(session.date) }}
+                            </div>
+                            <div class="d-flex align-center mb-2">
+                              <v-icon color="amber-darken-2" class="mr-2">mdi-clock-outline</v-icon>
+                              <strong>Time:</strong>&nbsp;{{ session.time }}
+                            </div>
+                            <div class="d-flex align-center mb-2">
+                              <v-icon color="amber-darken-2" class="mr-2">mdi-map-marker</v-icon>
+                              <strong>Location:</strong>&nbsp;{{ session.location }}
+                            </div>
+                            <div class="d-flex align-center">
+                              <v-icon color="amber-darken-2" class="mr-2">mdi-account</v-icon>
+                              <strong>Tutor:</strong>&nbsp;{{ session.tutor }}
+                            </div>
+                            <div class="d-flex mt-4">
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                color="amber"
+                                variant="outlined"
+                                class="mr-2"
+                                @click="openReschedule(session)"
+                              >
+                                <v-icon left>mdi-calendar-clock</v-icon>
+                                Reschedule
+                              </v-btn>
+                              <v-btn
+                                color="error"
+                                variant="outlined"
+                                @click="cancelSession(session.id)"
+                              >
+                                <v-icon left>mdi-cancel</v-icon>
+                                Cancel
+                              </v-btn>
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <v-container v-else>
+                <p class="text-center text-body-1 pa-6">No upcoming sessions scheduled</p>
+              </v-container>
+            </v-window-item>
+
+            <!-- Past Sessions -->
+            <v-window-item value="past">
+              <v-container v-if="pastSessions.length > 0">
+                <v-row>
+                  <v-col v-for="session in pastSessions" :key="session.id" cols="12" md="6">
+                    <v-card class="ma-2 session-card" elevation="2">
+                      <v-card-title class="text-h6">{{ session.subject }}</v-card-title>
+                      <v-card-text>
+                        <div><strong>Date:</strong> {{ formatDate(session.date) }}</div>
+                        <div><strong>Time:</strong> {{ session.time }}</div>
+                        <div><strong>Location:</strong> {{ session.location }}</div>
+                        <div><strong>Tutor:</strong> {{ session.tutor }}</div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <v-container v-else>
+                <p class="text-center text-body-1 pa-4">No past sessions found</p>
+              </v-container>
+            </v-window-item>
+          </v-window>
+        </v-card>
+      </v-container>
+    </v-app>
+  </v-responsive>
+
   <SessionsReschedule
     v-if="selectedSession"
     :session="selectedSession"
@@ -126,111 +225,6 @@ export default {
     @update:show="showReschedule = $event"
     @reschedule="handleReschedule"
   />
-
-  <SessionCancel
-    :show="showCancel"
-    :session-id="sessionToCancel"
-    @update:show="showCancel = $event"
-    @cancel="handleCancelSession"
-  />
-
-  <v-container fluid class="pa-6 sessions-background">
-    <v-card class="mx-auto session-card-container" max-width="1200">
-      <v-card-title class="text-h4 font-weight-bold text-center py-6">
-        My Sessions
-        <div class="text-subtitle-1 mt-2 text-grey">Manage your tutoring sessions</div>
-      </v-card-title>
-
-      <v-tabs v-model="tab" centered color="amber-darken-2">
-        <v-tab value="upcoming" class="text-subtitle-1">Upcoming Sessions</v-tab>
-        <v-tab value="past" class="text-subtitle-1">Past Sessions</v-tab>
-      </v-tabs>
-
-      <v-window v-model="tab">
-        <!-- Upcoming Sessions -->
-        <v-window-item value="upcoming">
-          <v-container v-if="upcomingSessions.length > 0">
-            <v-row>
-              <v-col v-for="session in upcomingSessions" :key="session.id" cols="12" md="6">
-                <v-card class="ma-2 session-card" elevation="2">
-                  <v-card-title class="text-h6 amber lighten-4 py-3">{{
-                    session.subject
-                  }}</v-card-title>
-                  <v-card-text class="pt-4">
-                    <v-row no-gutters>
-                      <v-col cols="12">
-                        <div class="d-flex align-center mb-2">
-                          <v-icon color="amber-darken-2" class="mr-2">mdi-calendar</v-icon>
-                          <strong>Date:</strong>&nbsp;{{ formatDate(session.date) }}
-                        </div>
-                        <div class="d-flex align-center mb-2">
-                          <v-icon color="amber-darken-2" class="mr-2">mdi-clock-outline</v-icon>
-                          <strong>Time:</strong>&nbsp;{{ session.time }}
-                        </div>
-                        <div class="d-flex align-center mb-2">
-                          <v-icon color="amber-darken-2" class="mr-2">mdi-map-marker</v-icon>
-                          <strong>Location:</strong>&nbsp;{{ session.location }}
-                        </div>
-                        <div class="d-flex align-center">
-                          <v-icon color="amber-darken-2" class="mr-2">mdi-account</v-icon>
-                          <strong>Tutor:</strong>&nbsp;{{ session.tutor }}
-                        </div>
-                        <div class="d-flex mt-4">
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            color="amber"
-                            variant="outlined"
-                            class="mr-2"
-                            @click="openReschedule(session)"
-                          >
-                            <v-icon left>mdi-calendar-clock</v-icon>
-                            Reschedule
-                          </v-btn>
-                          <v-btn
-                            color="error"
-                            variant="outlined"
-                            @click="openCancelDialog(session.id)"
-                          >
-                            <v-icon left>mdi-cancel</v-icon>
-                            Cancel
-                          </v-btn>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-container v-else>
-            <p class="text-center text-body-1 pa-6">No upcoming sessions scheduled</p>
-          </v-container>
-        </v-window-item>
-
-        <!-- Past Sessions -->
-        <v-window-item value="past">
-          <v-container v-if="pastSessions.length > 0">
-            <v-row>
-              <v-col v-for="session in pastSessions" :key="session.id" cols="12" md="6">
-                <v-card class="ma-2 session-card" elevation="2">
-                  <v-card-title class="text-h6">{{ session.subject }}</v-card-title>
-                  <v-card-text>
-                    <div><strong>Date:</strong> {{ formatDate(session.date) }}</div>
-                    <div><strong>Time:</strong> {{ session.time }}</div>
-                    <div><strong>Location:</strong> {{ session.location }}</div>
-                    <div><strong>Tutor:</strong> {{ session.tutor }}</div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-container v-else>
-            <p class="text-center text-body-1 pa-4">No past sessions found</p>
-          </v-container>
-        </v-window-item>
-      </v-window>
-    </v-card>
-  </v-container>
 </template>
 
 <style scoped>

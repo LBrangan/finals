@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, defineProps, defineEmits } from 'vue'
+import { tutors } from '@/stores/tutors.js'
 
 // Props
 const props = defineProps({
@@ -9,10 +10,10 @@ const props = defineProps({
 // Emits
 const emit = defineEmits(['update-subject'])
 
-// Local list of subjects
-const subjects = ref(['Data Structures', 'Networking', 'Web Development', 'Programming 1'])
+// Extract subjects from tutors and deduplicate
+const subjects = ref([...new Set(tutors.flatMap((tutor) => tutor.subjects))].sort())
 
-// Computed proxy for two-way binding
+// Two-way binding proxy
 const selectedSubjectProxy = computed({
   get: () => props.selectedSubject,
   set: (value) => emit('update-subject', value),

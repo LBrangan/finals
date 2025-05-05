@@ -1,177 +1,181 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import TutorsView from './TutorsView.vue'
 import SubjectSelector from '@/components/system/bookings/SubjectSelector.vue'
-import DateSelector from '@/components/system/bookings/DateSelector.vue'
+import SelectDateTime from '@/components/system/bookings/DateSelector.vue'
 import BookingConfirmation from '@/components/system/bookings/BookingConfirmation.vue'
+import { tutors } from '@/stores/tutors.js'
+import { useBookingStore } from '@/stores/bookingStore.js'
 
-const currentStep = ref(1)
-const selectedTutor = ref(null)
-const selectedSubject = ref(null)
-const selectedDate = ref(null)
-const selectedTime = ref(null)
-const agreeTerms = ref(false)
+const booking = useBookingStore()
+const router = useRouter()
+const route = useRoute()
+const toast = useToast()
 
-// Dummy tutors list
-const tutors = ref([
-  { id: 1, name: 'John Doe', expertise: 'Math' },
-  { id: 2, name: 'Jane Smith', expertise: 'Science' },
-])
+const availableTimes = [
+  '09:00 AM',
+  '10:00 AM',
+  '11:00 AM',
+  '01:00 PM',
+  '02:00 PM',
+  '03:00 PM',
+  '04:00 PM',
+]
 
-const nextStep = () => {
-  if (currentStep.value < 4) currentStep.value++
-}
-
-const prevStep = () => {
-  if (currentStep.value > 1) currentStep.value--
-}
-
-const bookSession = () => {
-  if (selectedDate.value && selectedTime.value && agreeTerms.value) {
-    const booking = {
-      tutor: selectedTutor.value,
-      subject: selectedSubject.value,
-      date: selectedDate.value,
-      time: selectedTime.value,
+onMounted(() => {
+  const tutorId = route.query.tutorId
+  if (tutorId) {
+    const matchedTutor = tutors.find((t) => t.id === Number(tutorId))
+    if (matchedTutor) {
+      booking.selectedTutor = matchedTutor
+      booking.currentStep = 2
     }
+  }
+})
 
-    localStorage.setItem('booking', JSON.stringify(booking))
-    alert('Booking confirmed!')
-    resetForm()
+function updateDate({ date, location }) {
+  booking.selectedDate = date
+  booking.selectedLocation = location
+}
+
+function updateSubject(subject) {
+  booking.selectedSubject = subject
+}
+
+function updateTime(time) {
+  booking.selectedTime = time
+}
+
+function confirmBooking() {
+  const session = booking.bookSession()
+  if (session) {
+    toast.success(`Session booked on ${session.date} at ${session.time}, ${session.location}`)
+    booking.resetForm()
+    router.push('/dashboard')
+  } else {
+    toast.error('Please complete all fields.')
   }
 }
-
-const updateSubject = (subject) => {
-  selectedSubject.value = subject
-}
-
-const resetForm = () => {
-  currentStep.value = 1
-  selectedTutor.value = null
-  selectedSubject.value = null
-  selectedDate.value = null
-  selectedTime.value = null
-  agreeTerms.value = false
-}
-
-const disableContinue = computed(() => {
-  if (currentStep.value === 1) return !selectedTutor.value
-  if (currentStep.value === 2) return !selectedSubject.value
-  if (currentStep.value === 3) return !selectedDate.value || !selectedTime.value
-  if (currentStep.value === 4) return !agreeTerms.value
-  return false
-})
 </script>
 
 <template>
-  <div class="booking-wrapper">
-    <v-card flat class="booking-card">
-      <v-card-title class="text-h5 font-weight-bold">📚 Book a Tutoring Session</v-card-title>
-      <v-divider class="my-4" />
+  <v-app>
+    <v-container class="booking-container">
+      <v-card class="booking-card mx-auto">
+        <v-card-title class="text-center title">
+          📚 Book a Tutoring Session
+          <div class="subtitle">Start by selecting a tutor</div>
+        </v-card-title>
 
-      <v-window v-model="currentStep" class="mb-4">
-        <v-window-item :value="1">
-          <TutorsView :tutors="tutors" v-model:selectedTutor="selectedTutor" />
-        </v-window-item>
+        <v-window v-model="booking.currentStep" class="mt-4">
+          <!-- Step 1: Select Tutor -->
+          <v-window-item :value="1">
+            <TutorsView
+              :tutors="tutors"
+              v-model="booking.selectedTutor"
+              :selected-tutor="booking.selectedTutor"
+              @update:selected-tutor="booking.selectedTutor = $event"
+            />
+          </v-window-item>
 
-        <v-window-item :value="2">
-          <SubjectSelector
-            :selectedTutor="selectedTutor"
-            v-model:selectedSubject="selectedSubject"
-            @update-subject="updateSubject"
-          />
-        </v-window-item>
+          <!-- Step 2: Subject Selection -->
+          <v-window-item :value="2">
+            <SubjectSelector
+              :selectedSubject="booking.selectedSubject"
+              :subjects="booking.selectedTutor?.subjects || []"
+              @update-subject="updateSubject"
+            />
+          </v-window-item>
 
-        <v-window-item :value="3">
-          <DateSelector v-model:selectedDate="selectedDate" v-model:selectedTime="selectedTime" />
-        </v-window-item>
+          <!-- Step 3: Date + Time -->
+          <v-window-item :value="3">
+            <SelectDateTime :selectedDate="booking.selectedDate" @update-date="updateDate" />
+            <v-divider class="my-4" />
+            <h4 class="font-weight-bold mb-2">Available Times</h4>
+            <v-row>
+              <v-col v-for="time in availableTimes" :key="time" cols="12" sm="6" md="3">
+                <v-btn
+                  block
+                  :color="booking.selectedTime === time ? 'primary' : 'grey-lighten-2'"
+                  :variant="booking.selectedTime === time ? 'elevated' : 'outlined'"
+                  @click="updateTime(time)"
+                >
+                  {{ time }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-window-item>
 
-        <v-window-item :value="4">
-          <BookingConfirmation
-            :selectedSubject="selectedSubject"
-            :selectedDate="selectedDate"
-            :selectedTime="selectedTime"
-          />
-        </v-window-item>
-      </v-window>
+          <!-- Step 4: Confirmation -->
+          <v-window-item :value="4">
+            <BookingConfirmation
+              :selectedSubject="booking.selectedSubject"
+              :selectedDate="booking.selectedDate"
+              :selectedTime="booking.selectedTime"
+              :selectedLocation="booking.selectedLocation"
+              :selectedTutor="booking.selectedTutor"
+              @confirm-booking="confirmBooking"
+            />
+          </v-window-item>
+        </v-window>
 
-      <v-card-actions class="booking-nav">
-        <v-btn color="grey-darken-1" variant="text" @click="prevStep" :disabled="currentStep === 1">
-          <v-icon left>mdi-arrow-left</v-icon> Back
-        </v-btn>
+        <v-divider class="my-4" />
 
-        <div class="d-flex align-center">
-          <v-checkbox
-            v-if="currentStep === 4"
-            v-model="agreeTerms"
-            label="I agree to the terms and conditions"
-            class="mr-4"
-            hide-details
-          />
+        <v-card-actions class="d-flex justify-space-between">
           <v-btn
-            color="teal-darken-1"
-            class="elevation-2"
-            @click="currentStep === 4 ? bookSession() : nextStep()"
-            :disabled="disableContinue"
+            variant="text"
+            color="grey"
+            @click="booking.goToPrevStep"
+            :disabled="booking.currentStep === 1"
           >
-            {{ currentStep === 4 ? 'Confirm Booking' : 'Continue' }}
+            <v-icon left>mdi-arrow-left</v-icon> Back
+          </v-btn>
+          <v-btn variant="text" color="red" @click="booking.resetForm">
+            <v-icon left>mdi-refresh</v-icon> Reset
+          </v-btn>
+          <v-btn
+            color="green"
+            @click="booking.currentStep === 4 ? confirmBooking() : booking.goToNextStep()"
+            :disabled="
+              (booking.currentStep === 1 && !booking.selectedTutor) ||
+              (booking.currentStep === 2 && !booking.selectedSubject) ||
+              (booking.currentStep === 3 && (!booking.selectedDate || !booking.selectedTime))
+            "
+          >
+            {{ booking.currentStep === 4 ? 'Confirm Booking' : 'Continue' }}
             <v-icon right>
-              {{ currentStep === 4 ? 'mdi-check' : 'mdi-arrow-right' }}
+              {{ booking.currentStep === 4 ? 'mdi-check' : 'mdi-arrow-right' }}
             </v-icon>
           </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </div>
+        </v-card-actions>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <style scoped>
-.booking-wrapper {
-  max-width: 850px;
-  margin: 40px auto;
-  padding: 1rem;
+.booking-container {
+  background: linear-gradient(135deg, #fff9c4, #ffe082);
+  min-height: 100vh;
+  padding: 2rem;
 }
-
 .booking-card {
+  max-width: 900px;
   border-radius: 16px;
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  background: #fffbe6;
+  padding: 2rem;
+  background-color: #fffdf4;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
-
-.booking-card:hover {
-  transform: scale(1.003);
+.title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #3e2723;
 }
-
-.booking-nav {
-  position: sticky;
-  bottom: 0;
-  background-color: #fff;
-  z-index: 10;
-  padding: 1rem;
-  border-top: 1px solid #eee;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.v-btn {
-  transition: all 0.2s ease;
-}
-
-.v-btn:hover {
-  transform: scale(1.02);
-}
-
-.v-window {
-  min-height: 300px;
-}
-
-.v-card-title {
-  background: linear-gradient(to right, #ffe082, #fff8e1);
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-.v-checkbox .v-label {
-  font-size: 14px;
+.subtitle {
+  font-size: 1rem;
+  color: #757575;
+  margin-top: 0.5rem;
 }
 </style>

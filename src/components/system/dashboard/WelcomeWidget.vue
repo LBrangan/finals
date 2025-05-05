@@ -80,7 +80,7 @@ onMounted(async () => {
                   block
                   height="56"
                   rounded="lg"
-                  :to="'/profiles'"
+                  :to="'/tutors'"
                   aria-label="Browse Tutors"
                 >
                   Browse Tutors

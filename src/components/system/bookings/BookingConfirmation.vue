@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue'
+import { defineProps } from 'vue'
 
 // Define props
 const props = defineProps({
@@ -7,24 +7,11 @@ const props = defineProps({
   selectedDate: String,
   selectedTime: String,
   selectedLocation: String,
-  agreeTerms: Boolean,
 })
 
 // Define emits
-const emit = defineEmits(['confirm-booking', 'update-terms'])
-
-// Local reactive state for terms agreement
-const localAgreeTerms = ref(props.agreeTerms)
-
-// Watch for changes in terms agreement
-watch(localAgreeTerms, (newValue) => {
-  emit('update-terms', newValue)
-})
 
 // Method to confirm the booking
-const confirmBooking = () => {
-  emit('confirm-booking')
-}
 </script>
 
 <template>
@@ -35,11 +22,6 @@ const confirmBooking = () => {
     <strong>Time:</strong> {{ props.selectedTime }} <br />
     <strong>Location:</strong> {{ props.selectedLocation }}
   </p>
-  <v-checkbox
-    v-model="localAgreeTerms"
-    label="I agree to the session terms and conditions"
-  ></v-checkbox>
-  <v-btn color="success" @click="confirmBooking" :disabled="!localAgreeTerms">
-    Confirm Booking
-  </v-btn>
+
+  <v-spacer class="my-5"></v-spacer>
 </template>

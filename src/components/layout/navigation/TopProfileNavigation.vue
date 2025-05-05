@@ -55,7 +55,9 @@ const navigationItems = computed(() => {
   return [
     { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
     { title: 'Browse Tutors', icon: 'mdi-account-search', to: '/tutors' },
-    { title: 'Book Session', icon: 'mdi-book-open-page-variant', to: '/bookings' },
+    { title: 'My Sessions', icon: 'mdi-calendar-clock', to: '/sessions' },
+
+    { title: 'My Profile', icon: 'mdi-account-circle', to: '/account/settings' },
   ]
 })
 
